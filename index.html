@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <!-- ============================================================
+       HEAD - Meta / Fonts / Tailwind CDN
+  ============================================================ -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="MAG7 투자자를 위한 소셜 루머·뉴스·주가 영향 해석 브리핑 서비스 MagPulse" />
+  <title>MagPulse — MAG7 루머·뉴스·해석 한 화면에</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Font: DM Sans + DM Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"DM Sans"', 'sans-serif'],
+            mono: ['"DM Mono"', 'monospace'],
+          },
+          colors: {
+            navy: {
+              950: '#03060f',
+              900: '#060d1f',
+              850: '#091428',
+              800: '#0d1c36',
+              700: '#122348',
+            },
+            brand: {
+              50:  '#eef6ff',
+              100: '#d9eaff',
+              200: '#bbd7ff',
+              300: '#8dbcff',
+              400: '#5994f8',
+              500: '#3a74f0',
+              600: '#2558e4',
+              700: '#1d44d0',
+              800: '#1e39a8',
+              900: '#1e3284',
+            },
+            cyan: {
+              400: '#22d3ee',
+              500: '#06b6d4',
+            },
+            emerald: {
+              400: '#34d399',
+              500: '#10b981',
+            },
+            amber: {
+              400: '#fbbf24',
+            },
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    /* Base styles */
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: #03060f;
+      color: #e2e8f0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Background mesh gradient */
+    .bg-mesh {
+      background-color: #03060f;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(37, 88, 228, 0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 10%, rgba(34, 211, 238, 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 60% at 10% 80%, rgba(30, 50, 132, 0.12) 0%, transparent 50%);
+    }
+
+    /* Glass card effect */
+    .glass-card {
+      background: rgba(9, 20, 40, 0.7);
+      border: 1px solid rgba(58, 116, 240, 0.18);
+      backdrop-filter: blur(12px);
+    }
+
+    .glass-card-light {
+      background: rgba(13, 28, 54, 0.8);
+      border: 1px solid rgba(58, 116, 240, 0.14);
+    }
+
+    /* Gradient text */
+    .text-gradient {
+      background: linear-gradient(135deg, #5994f8 0%, #22d3ee 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Glow effect on primary CTA */
+    .btn-primary {
+      background: linear-gradient(135deg, #3a74f0 0%, #2558e4 100%);
+      box-shadow: 0 0 24px rgba(58, 116, 240, 0.35);
+      transition: box-shadow 0.2s ease, transform 0.15s ease;
+    }
+    .btn-primary:hover {
+      box-shadow: 0 0 36px rgba(58, 116, 240, 0.55);
+      transform: translateY(-1px);
+    }
+
+    /* Divider gradient */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(58, 116, 240, 0.3), transparent);
+    }
+
+    /* Section alternating bg */
+    .section-alt {
+      background: rgba(9, 20, 40, 0.55);
+      border-top: 1px solid rgba(58, 116, 240, 0.10);
+      border-bottom: 1px solid rgba(58, 116, 240, 0.10);
+    }
+
+    /* Ticker-style scrolling text */
+    .ticker-scroll {
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .ticker-inner {
+      display: inline-block;
+      animation: ticker 28s linear infinite;
+    }
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* FAQ accordion */
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.32s ease, padding 0.2s ease;
+    }
+    .faq-answer.open {
+      max-height: 320px;
+    }
+
+    /* Mobile menu */
+    #mobile-menu {
+      display: none;
+    }
+    #mobile-menu.open {
+      display: block;
+    }
+
+    /* Animated dot indicator */
+    .dot-live {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 8px #34d399;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.3; }
+    }
+
+    /* Card hover */
+    .hover-lift {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hover-lift:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(58, 116, 240, 0.18);
+    }
+
+    /* Number gradient */
+    .num-gradient {
+      background: linear-gradient(135deg, #5994f8, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  </style>
+</head>
+
+<body class="bg-mesh">
+
+<!-- ============================================================
+     NAVIGATION
+============================================================ -->
+<header id="nav" class="fixed top-0 left-0 right-0 z-50 border-b border-white/5" style="background:rgba(3,6,15,0.88);backdrop-filter:blur(16px);">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#3a74f0,#22d3ee)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 2L13 5.5V10.5L8 14L3 10.5V5.5L8 2Z" fill="white" opacity="0.9"/>
+            <path d="M8 5L11 6.8V10.2L8 12L5 10.2V6.8L8 5Z" fill="white"/>
+          </svg>
+        </div>
+        <span class="text-white font-bold text-lg tracking-tight">MagPulse</span>
+      </a>
+
+      <!-- Desktop nav links -->
+      <nav class="hidden md:flex items-center gap-6 text-sm text-slate-400">
+        <a href="#features"    class="hover:text-white transition-colors">기능</a>
+        <a href="#proof"       class="hover:text-white transition-colors">브리핑 예시</a>
+        <a href="#faq"         class="hover:text-white transition-colors">FAQ</a>
+        <a href="#signup"      class="hover:text-white transition-colors">무료 신청</a>
+      </nav>
+
+      <!-- Desktop CTA -->
+      <a href="#signup" class="hidden md:inline-flex btn-primary text-white text-sm font-semibold px-4 py-2 rounded-lg">
+        오늘의 MAG7 브리핑 무료로 받기
+      </a>
+
+      <!-- Mobile hamburger -->
+      <button id="menu-btn" class="md:hidden text-slate-400 hover:text-white p-2">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="19" y2="6"/>
+          <line x1="3" y1="11" x2="19" y2="11"/>
+          <line x1="3" y1="16" x2="19" y2="16"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="md:hidden pb-4 border-t border-white/5 pt-3">
+      <nav class="flex flex-col gap-3 text-sm text-slate-400 mb-4">
+        <a href="#features"  class="hover:text-white transition-colors py-1" onclick="closeMobileMenu()">기능</a>
+        <a href="#proof"     class="hover:text-white transition-colors py-1" onclick="closeMobileMenu()">브리핑 예시</a>
+        <a href="#faq"       class="hover:text-white transition-colors py-1" onclick="closeMobileMenu()">FAQ</a>
+        <a href="#signup"    class="hover:text-white transition-colors py-1" onclick="closeMobileMenu()">무료 신청</a>
+      </nav>
+      <a href="#signup" onclick="closeMobileMenu()" class="btn-primary block text-center text-white text-sm font-semibold px-4 py-3 rounded-lg">
+        오늘의 MAG7 브리핑 무료로 받기
+      </a>
+    </div>
+  </div>
+</header>
+
+
+<!-- ============================================================
+     HERO SECTION
+============================================================ -->
+<section class="pt-28 pb-16 md:pt-36 md:pb-24 relative overflow-hidden">
+  <!-- Decorative glow blobs -->
+  <div class="absolute top-0 left-1/4 w-96 h-96 rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(37,88,228,0.12) 0%,transparent 70%);"></div>
+  <div class="absolute top-20 right-0 w-80 h-80 rounded-full pointer-events-none" style="background:radial-gradient(circle,rgba(34,211,238,0.07) 0%,transparent 70%);"></div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="grid md:grid-cols-2 gap-10 items-center">
+
+      <!-- Left: Text -->
+      <div>
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 glass-card px-3 py-1.5 rounded-full text-xs font-medium text-cyan-400 mb-6">
+          <span class="dot-live"></span>
+          무료 베타 진행 중 · 대기자 167명
+        </div>
+
+        <!-- H1 -->
+        <h1 class="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-white mb-4">
+          MAG7 루머·뉴스·<br class="hidden sm:block"/>해석,<br/>
+          <span class="text-gradient">이제 따로 찾지<br/>마세요.</span>
+        </h1>
+
+        <!-- Sub-headline -->
+        <p class="text-slate-400 text-base sm:text-lg leading-relaxed mb-8 max-w-lg">
+          테슬라·엔비디아·애플 등 MAG7 최신 소셜 루머와 확인된 뉴스, 주가 영향 해석을 <strong class="text-slate-200 font-semibold">한 화면에서 3분 안에</strong> 파악합니다.
+        </p>
+
+        <!-- CTA button -->
+        <a href="#signup" class="btn-primary inline-flex items-center gap-2 text-white font-bold text-base px-7 py-4 rounded-xl mb-4 w-full sm:w-auto justify-center sm:justify-start">
+          오늘의 MAG7 브리핑 무료로 받기
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+        </a>
+
+        <!-- Micro-copy -->
+        <p class="text-slate-500 text-xs mb-8">신용카드 불필요 &nbsp;·&nbsp; 1분 신청 &nbsp;·&nbsp; 베타 무료</p>
+
+        <!-- Trust bar -->
+        <div class="flex flex-wrap gap-4 text-xs text-slate-400">
+          <div class="flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#5994f8" stroke-width="1.5"/><path d="M4.5 7l2 2 3-3" stroke="#5994f8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            초기 대기자 167명
+          </div>
+          <div class="flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#5994f8" stroke-width="1.5"/><path d="M4.5 7l2 2 3-3" stroke="#5994f8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            미국주식 데이터·리서치 경력팀
+          </div>
+          <div class="flex items-center gap-1.5">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#5994f8" stroke-width="1.5"/><path d="M4.5 7l2 2 3-3" stroke="#5994f8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            샘플 브리핑 즉시 확인
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Dashboard Preview Card -->
+      <div class="relative">
+        <!-- Outer card -->
+        <div class="glass-card rounded-2xl p-4 relative">
+          <!-- Header bar -->
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 rounded-full bg-red-400"></div>
+              <div class="w-2 h-2 rounded-full bg-amber-400"></div>
+              <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+              <span class="text-slate-500 text-xs ml-2 font-mono">MagPulse Dashboard</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-emerald-400 text-xs">
+              <span class="dot-live"></span>LIVE
+            </div>
+          </div>
+
+          <!-- Ticker tabs -->
+          <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
+            <button class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-600 text-white whitespace-nowrap">TSLA</button>
+            <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 glass-card-light whitespace-nowrap hover:text-white transition-colors">NVDA</button>
+            <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 glass-card-light whitespace-nowrap hover:text-white transition-colors">AAPL</button>
+            <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 glass-card-light whitespace-nowrap hover:text-white transition-colors">MSFT</button>
+            <button class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 glass-card-light whitespace-nowrap hover:text-white transition-colors">AMZN</button>
+          </div>
+
+          <!-- Rumor card -->
+          <div class="rounded-xl p-3 mb-2.5" style="background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.2)">
+            <div class="flex items-start gap-2.5">
+              <span class="inline-flex mt-0.5 items-center px-2 py-0.5 rounded-md text-xs font-bold" style="background:rgba(251,191,36,0.15);color:#fbbf24">미확인</span>
+              <div>
+                <p class="text-slate-200 text-xs leading-relaxed">Elon, FSD 전면 업데이트 예고 — X에서 빠르게 확산 중</p>
+                <p class="text-slate-500 text-xs mt-1">38분 전 · X / @TeslaLeaks_</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Confirmed news card -->
+          <div class="rounded-xl p-3 mb-2.5" style="background:rgba(52,211,153,0.07);border:1px solid rgba(52,211,153,0.2)">
+            <div class="flex items-start gap-2.5">
+              <span class="inline-flex mt-0.5 items-center px-2 py-0.5 rounded-md text-xs font-bold" style="background:rgba(52,211,153,0.15);color:#34d399">확인됨</span>
+              <div>
+                <p class="text-slate-200 text-xs leading-relaxed">테슬라, 2분기 인도량 발표 — 전분기 대비 +12%</p>
+                <p class="text-slate-500 text-xs mt-1">2시간 전 · Reuters</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analysis card -->
+          <div class="rounded-xl p-3" style="background:rgba(89,148,248,0.07);border:1px solid rgba(89,148,248,0.2)">
+            <div class="flex items-start gap-2.5">
+              <span class="inline-flex mt-0.5 items-center px-2 py-0.5 rounded-md text-xs font-bold" style="background:rgba(89,148,248,0.15);color:#5994f8">해석</span>
+              <div>
+                <p class="text-slate-200 text-xs leading-relaxed">인도량 서프라이즈 + FSD 기대감 동시 → 단기 상방 압력 가능성</p>
+                <p class="text-slate-500 text-xs mt-1">MagPulse 분석 · 5분 전</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom mini stats -->
+          <div class="flex items-center justify-between mt-4 pt-3 border-t border-white/5 text-xs text-slate-500">
+            <span>오늘 브리핑 3개 종목 업데이트</span>
+            <span class="text-brand-400 font-medium cursor-pointer hover:underline">전체 보기 →</span>
+          </div>
+        </div>
+
+        <!-- Floating badge -->
+        <div class="absolute -top-3 -right-3 glass-card px-3 py-1.5 rounded-full text-xs font-semibold text-cyan-400 hidden sm:block">
+          ⚡ 오늘 NVDA 중요 이슈 2건
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     TICKER STRIP
+============================================================ -->
+<div class="border-y border-white/5 py-3 overflow-hidden" style="background:rgba(9,20,40,0.6)">
+  <div class="ticker-scroll">
+    <div class="ticker-inner text-xs font-mono text-slate-500">
+      <span class="mr-8">TSLA <span class="text-emerald-400">+2.4%</span></span>
+      <span class="mr-8">NVDA <span class="text-emerald-400">+1.8%</span></span>
+      <span class="mr-8">AAPL <span class="text-slate-400">+0.3%</span></span>
+      <span class="mr-8">MSFT <span class="text-emerald-400">+0.9%</span></span>
+      <span class="mr-8">AMZN <span class="text-emerald-400">+1.2%</span></span>
+      <span class="mr-8">META <span class="text-red-400">-0.6%</span></span>
+      <span class="mr-8">GOOGL <span class="text-emerald-400">+0.7%</span></span>
+      <span class="mr-20 text-brand-400">MAG7 오늘 주요 이슈 →</span>
+      <span class="mr-8">TSLA <span class="text-emerald-400">+2.4%</span></span>
+      <span class="mr-8">NVDA <span class="text-emerald-400">+1.8%</span></span>
+      <span class="mr-8">AAPL <span class="text-slate-400">+0.3%</span></span>
+      <span class="mr-8">MSFT <span class="text-emerald-400">+0.9%</span></span>
+      <span class="mr-8">AMZN <span class="text-emerald-400">+1.2%</span></span>
+      <span class="mr-8">META <span class="text-red-400">-0.6%</span></span>
+      <span class="mr-8">GOOGL <span class="text-emerald-400">+0.7%</span></span>
+      <span class="mr-20 text-brand-400">MAG7 오늘 주요 이슈 →</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     PROBLEM SECTION
+============================================================ -->
+<section id="problem" class="py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+
+    <!-- Section label -->
+    <div class="text-center mb-12">
+      <span class="text-xs font-semibold text-brand-400 uppercase tracking-widest mb-3 block">Problem</span>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">혹시 이런 경험 있으신가요?</h2>
+      <p class="text-slate-400 text-base max-w-xl mx-auto">매일 밤 MAG7 이슈를 직접 찾아 헤매는 투자자라면, 이 피로감이 낯설지 않을 겁니다.</p>
+    </div>
+
+    <!-- Pain point cards -->
+    <div class="grid sm:grid-cols-2 gap-4 mb-12">
+
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background:rgba(251,191,36,0.1)">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#fbbf24" stroke-width="1.5"/><path d="M11 7v5l3 3" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="text-white font-semibold text-base mb-2">정보 탐색에 매일 1~2시간을 씁니다</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          밤마다 X → Reddit → 유튜브 → 구글 뉴스를 돌아다니며 "오늘 테슬라 뭔 이슈야?"를 직접 찾아야 합니다. 찾아도 뭐가 진짜인지 모릅니다.
+        </p>
+      </div>
+
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background:rgba(239,68,68,0.1)">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="9" stroke="#f87171" stroke-width="1.5"/><path d="M11 7v4M11 15v1" stroke="#f87171" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="text-white font-semibold text-base mb-2">중요한 이슈를 항상 뒤늦게 알게 됩니다</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          아침에 뉴스를 보면 이미 주가가 움직인 뒤입니다. "어제 밤에 NVDA 관련 발표가 있었구나" — 항상 한 발씩 늦습니다.
+        </p>
+      </div>
+
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background:rgba(139,92,246,0.1)">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="#a78bfa" stroke-width="1.5"/><rect x="12" y="3" width="7" height="7" rx="1.5" stroke="#a78bfa" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="1.5" stroke="#a78bfa" stroke-width="1.5"/><rect x="12" y="12" width="7" height="7" rx="1.5" stroke="#a78bfa" stroke-width="1.5"/></svg>
+        </div>
+        <h3 class="text-white font-semibold text-base mb-2">루머인지 뉴스인지 의견인지 구분이 안 됩니다</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          X의 스레드, Seeking Alpha의 분석, 레딧의 추측이 모두 비슷하게 보입니다. 어디까지 믿어야 할지 기준이 없습니다.
+        </p>
+      </div>
+
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background:rgba(34,211,238,0.1)">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 17L8.5 11l4 4L17 7" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="text-white font-semibold text-base mb-2">"그래서 주가에 왜 중요해?"를 아무도 설명하지 않습니다</h3>
+        <p class="text-slate-400 text-sm leading-relaxed">
+          기사는 많아도 "이게 TSLA 주가에 어떤 영향을 줄 수 있는지" 핵심을 직접 짚어주는 곳은 거의 없습니다.
+        </p>
+      </div>
+    </div>
+
+    <!-- Bridge sentence -->
+    <div class="text-center">
+      <div class="inline-block glass-card rounded-2xl px-8 py-4">
+        <p class="text-slate-200 font-medium text-base sm:text-lg">
+          이 불편함을 해결하기 위해 MagPulse를 만들었습니다.
+          <span class="text-gradient font-bold"> 이제 다른 방법이 있습니다.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SOLUTION SECTION
+============================================================ -->
+<section id="solution" class="section-alt py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+
+    <div class="text-center mb-14">
+      <span class="text-xs font-semibold text-brand-400 uppercase tracking-widest mb-3 block">Solution</span>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
+        MagPulse는 흩어진 MAG7 정보를,<br class="hidden sm:block"/>
+        <span class="text-gradient">투자 판단 가능한 브리핑으로 바꿉니다</span>
+      </h2>
+      <p class="text-slate-400 text-sm max-w-lg mx-auto">X, 레딧, 뉴스 앱을 따로 열 필요 없이 — 하나의 브리핑으로 아침을 시작하세요.</p>
+    </div>
+
+    <!-- Before / After -->
+    <div class="grid sm:grid-cols-2 gap-4 mb-16">
+      <!-- Before -->
+      <div class="rounded-2xl p-5" style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.18)">
+        <p class="text-red-400 text-xs font-bold uppercase tracking-wider mb-4">Before — 지금까지</p>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-2.5 text-slate-400 text-sm">
+            <svg width="16" height="16" class="mt-0.5 shrink-0" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#f87171" stroke-width="1.3"/><path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke="#f87171" stroke-width="1.3" stroke-linecap="round"/></svg>
+            X·레딧·유튜브·뉴스 사이트를 4개 이상 직접 탐색
+          </li>
+          <li class="flex items-start gap-2.5 text-slate-400 text-sm">
+            <svg width="16" height="16" class="mt-0.5 shrink-0" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#f87171" stroke-width="1.3"/><path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke="#f87171" stroke-width="1.3" stroke-linecap="round"/></svg>
+            루머·뉴스·의견이 뒤섞여 판단 기준 없음
+          </li>
+          <li class="flex items-start gap-2.5 text-slate-400 text-sm">
+            <svg width="16" height="16" class="mt-0.5 shrink-0" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#f87171" stroke-width="1.3"/><path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke="#f87171" stroke-width="1.3" stroke-linecap="round"/></svg>
+            주가에 왜 중요한지 아무도 설명 안 해줌
+          </li>
+          <li class="flex items-start gap-2.5 text-slate-400 text-sm">
+            <svg width="16" height="16" class="mt-0.5 shrink-0" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#f87171" stroke-width="1.3"/><path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke="#f87171" stroke-width="1.3" stroke-linecap="round"/></svg>
+            매일 1~2시간 정보 수집에 낭비
+          </li>
+        </ul>
+      </div>
+      <!-- After -->
+      <div class="rounded-2xl p-5" style="background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.18)">
+        <p class="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-4">After — MagPulse</p>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-2.5 text-slate-200 text-sm">
+            <svg width="16" height="16" class="mt-0.5 shrink-0" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#34d399" stroke-width="1.3"/><path d="M5 8l2.5 2.5L11 5.5" stroke="#34d399" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            MAG7 전 종목 이슈를 단 하나의 브리핑으로
+          </li>
+          <li class="flex items-start gap-2.5 text-slate-200 text-sm">
+            <svg width="16" height="16" class="mt-0.5 shrink-0" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#34d399" stroke-width="1.3"/><path d="M5 8l2.5 2.5L11 5.5" stroke="#34d399" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            미확인·확인됨·해석 배지로 즉시 구분
+          </li>
+          <li class="flex items-start gap-2.5 text-slate-200 text-sm">
+            <svg width="16" height="16" class="mt-0.5 shrink-0" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#34d399" stroke-width="1.3"/><path d="M5 8l2.5 2.5L11 5.5" stroke="#34d399" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            각 이슈마다 한 줄 주가 영향 해석 포함
+          </li>
+          <li class="flex items-start gap-2.5 text-slate-200 text-sm">
+            <svg width="16" height="16" class="mt-0.5 shrink-0" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#34d399" stroke-width="1.3"/><path d="M5 8l2.5 2.5L11 5.5" stroke="#34d399" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            아침 3분이면 오늘의 MAG7 흐름 파악 완료
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- How it works: 3 steps -->
+    <div class="text-center mb-8">
+      <h3 class="text-white font-bold text-xl mb-2">3단계로 작동합니다</h3>
+      <p class="text-slate-500 text-sm">복잡한 설정 없이 이메일 하나로 시작하세요</p>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-4">
+      <div class="glass-card rounded-2xl p-5 text-center relative">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-sm" style="background:linear-gradient(135deg,#3a74f0,#22d3ee)">1</div>
+        <h4 class="text-white font-semibold text-sm mb-2">종목 선택</h4>
+        <p class="text-slate-400 text-xs leading-relaxed">관심 있는 MAG7 종목을 선택하면 해당 종목의 이슈만 집중 추적합니다.</p>
+      </div>
+      <div class="glass-card rounded-2xl p-5 text-center relative">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-sm" style="background:linear-gradient(135deg,#3a74f0,#22d3ee)">2</div>
+        <h4 class="text-white font-semibold text-sm mb-2">이슈 분류</h4>
+        <p class="text-slate-400 text-xs leading-relaxed">소셜 루머·공식 뉴스·해석성 의견을 배지로 구분해 한눈에 파악할 수 있게 정리합니다.</p>
+      </div>
+      <div class="glass-card rounded-2xl p-5 text-center relative">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-4 text-white font-bold text-sm" style="background:linear-gradient(135deg,#3a74f0,#22d3ee)">3</div>
+        <h4 class="text-white font-semibold text-sm mb-2">빠른 판단</h4>
+        <p class="text-slate-400 text-xs leading-relaxed">각 이슈에 "주가에 왜 중요할 수 있는지"를 짧게 붙여 즉시 투자 판단에 활용할 수 있게 합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SOCIAL PROOF SECTION
+============================================================ -->
+<section id="proof" class="py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+
+    <div class="text-center mb-12">
+      <span class="text-xs font-semibold text-brand-400 uppercase tracking-widest mb-3 block">Social Proof</span>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">아직 초기 서비스입니다.<br/>그래도 이 숫자들은 진짜입니다.</h2>
+      <p class="text-slate-400 text-sm max-w-xl mx-auto">
+        아직 대형 언론 보도나 유명 파트너는 없습니다. 하지만 실제 사용자의 반응과 팀의 경험으로 만들고 있습니다.
+      </p>
+    </div>
+
+    <!-- Stats cards -->
+    <div class="grid grid-cols-3 gap-3 sm:gap-5 mb-12">
+      <div class="glass-card rounded-2xl p-4 sm:p-6 text-center hover-lift">
+        <div class="text-3xl sm:text-4xl font-extrabold num-gradient mb-1">167</div>
+        <div class="text-slate-400 text-xs sm:text-sm">무료 베타 대기자</div>
+      </div>
+      <div class="glass-card rounded-2xl p-4 sm:p-6 text-center hover-lift">
+        <div class="text-3xl sm:text-4xl font-extrabold num-gradient mb-1">9년</div>
+        <div class="text-slate-400 text-xs sm:text-sm">팀 합산 경력</div>
+      </div>
+      <div class="glass-card rounded-2xl p-4 sm:p-6 text-center hover-lift">
+        <div class="text-3xl sm:text-4xl font-extrabold num-gradient mb-1">3분</div>
+        <div class="text-slate-400 text-xs sm:text-sm">평균 브리핑 확인 시간</div>
+      </div>
+    </div>
+
+    <!-- Testimonial cards -->
+    <div class="grid sm:grid-cols-3 gap-4">
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="flex gap-1 mb-3">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed mb-4">
+          "트위터에서 본 루머가 뉴스로 확인된 건지 아닌지 바로 구분돼서 훨씬 보기 편했어요."
+        </p>
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style="background:linear-gradient(135deg,#3a74f0,#22d3ee)">K</div>
+          <div>
+            <p class="text-white text-xs font-semibold">김*현</p>
+            <p class="text-slate-500 text-xs">베타 사용자 · TSLA 투자자</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="flex gap-1 mb-3">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed mb-4">
+          "테슬라 이슈를 여러 사이트에서 찾던 시간이 크게 줄었어요. 아침에 딱 한 번만 보면 되니까요."
+        </p>
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style="background:linear-gradient(135deg,#3a74f0,#22d3ee)">L</div>
+          <div>
+            <p class="text-white text-xs font-semibold">이*준</p>
+            <p class="text-slate-500 text-xs">베타 사용자 · MAG7 장기 투자자</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="flex gap-1 mb-3">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#fbbf24"><polygon points="7,1 8.8,5.3 13.5,5.7 10,8.8 11.1,13.5 7,11 2.9,13.5 4,8.8 0.5,5.7 5.2,5.3"/></svg>
+        </div>
+        <p class="text-slate-300 text-sm leading-relaxed mb-4">
+          "기사만 모아둔 게 아니라 시장영향 해석이 붙어 있어서 좋았습니다. 판단에 실질적으로 도움이 됐어요."
+        </p>
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style="background:linear-gradient(135deg,#3a74f0,#22d3ee)">P</div>
+          <div>
+            <p class="text-white text-xs font-semibold">박*영</p>
+            <p class="text-slate-500 text-xs">베타 사용자 · NVDA·AAPL 보유</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FEATURES SECTION
+============================================================ -->
+<section id="features" class="section-alt py-20 md:py-28">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+
+    <div class="text-center mb-14">
+      <span class="text-xs font-semibold text-brand-400 uppercase tracking-widest mb-3 block">Features</span>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">MAG7 투자자를 위해<br/>설계된 6가지 기능</h2>
+      <p class="text-slate-400 text-sm max-w-md mx-auto">정보 수집이 아닌 투자 판단에 집중할 수 있게 만드는 핵심 기능들입니다.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+
+      <!-- Feature 1 -->
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style="background:rgba(251,191,36,0.1)">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="7" height="7" rx="2" stroke="#fbbf24" stroke-width="1.5"/><rect x="12" y="12" width="7" height="7" rx="2" stroke="#fbbf24" stroke-width="1.5"/><rect x="3" y="12" width="7" height="7" rx="2" stroke="#22d3ee" stroke-width="1.5"/><rect x="12" y="3" width="7" height="7" rx="2" stroke="#34d399" stroke-width="1.5"/></svg>
+        </div>
+        <h3 class="text-white font-semibold text-sm mb-2">루머 분리</h3>
+        <p class="text-slate-400 text-xs leading-relaxed">소셜에서 도는 미확인 루머를 공식 뉴스와 분리해 배지로 구분합니다. 무엇을 믿고 무엇을 참고할지 즉시 알 수 있습니다.</p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style="background:rgba(58,116,240,0.1)">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 18V8l7-4 7 4v10" stroke="#5994f8" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 18v-5h8v5" stroke="#5994f8" stroke-width="1.5" stroke-linejoin="round"/><line x1="11" y1="9" x2="11" y2="11" stroke="#5994f8" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="text-white font-semibold text-sm mb-2">종목별 타임라인</h3>
+        <p class="text-slate-400 text-xs leading-relaxed">TSLA, NVDA 등 각 종목별로 오늘의 이슈를 시간순으로 정렬해 흐름을 한눈에 파악할 수 있습니다.</p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style="background:rgba(34,211,238,0.1)">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 17L8.5 11l4 4L17 7" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="17" cy="6" r="1.5" fill="#22d3ee"/></svg>
+        </div>
+        <h3 class="text-white font-semibold text-sm mb-2">한 줄 영향 해석</h3>
+        <p class="text-slate-400 text-xs leading-relaxed">단순 링크 모음이 아닙니다. 각 이슈마다 "주가에 왜 중요할 수 있는지"를 짧고 명확하게 설명합니다.</p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style="background:rgba(52,211,153,0.1)">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="#34d399" stroke-width="1.5"/><path d="M11 7v4l3 2" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="text-white font-semibold text-sm mb-2">MAG7 집중 추적</h3>
+        <p class="text-slate-400 text-xs leading-relaxed">수백 개 종목이 아닌 MAG7에만 집중합니다. 테슬라·엔비디아·애플·마이크로소프트·아마존·메타·알파벳의 이슈를 깊게 추적합니다.</p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style="background:rgba(139,92,246,0.1)">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="5" width="16" height="13" rx="2" stroke="#a78bfa" stroke-width="1.5"/><path d="M7 9h8M7 13h5" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="text-white font-semibold text-sm mb-2">샘플 브리핑 즉시 확인</h3>
+        <p class="text-slate-400 text-xs leading-relaxed">신청 즉시 오늘의 샘플 브리핑을 확인할 수 있습니다. 구독 전에 실제 콘텐츠 품질을 직접 검증하세요.</p>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="glass-card rounded-2xl p-5 hover-lift">
+        <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style="background:rgba(58,116,240,0.1)">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="5" y="2" width="12" height="18" rx="3" stroke="#5994f8" stroke-width="1.5"/><path d="M8 7h6M8 10h6M8 13h4" stroke="#5994f8" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="text-white font-semibold text-sm mb-2">모바일 우선 브리핑</h3>
+        <p class="text-slate-400 text-xs leading-relaxed">출퇴근 중에도 빠르게 소화할 수 있도록 모바일에 최적화된 간결한 레이아웃으로 설계되었습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     PRICING / OFFER SECTION
+============================================================ -->
+<section id="pricing" class="py-20 md:py-28">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+
+    <div class="text-center mb-12">
+      <span class="text-xs font-semibold text-brand-400 uppercase tracking-widest mb-3 block">Pricing</span>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">지금은 무료 베타로<br/>먼저 확인하세요</h2>
+      <p class="text-slate-400 text-sm max-w-lg mx-auto">MagPulse는 지금 무료로 사용할 수 있습니다. 어떤 정보가 실제로 투자자에게 유용한지 먼저 검증하고 싶기 때문입니다.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-6">
+      <!-- Free Beta Card -->
+      <div class="glass-card rounded-2xl p-7 relative border-brand-600/40 hover-lift" style="border-color:rgba(37,88,228,0.4)">
+        <div class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold mb-5" style="background:rgba(52,211,153,0.12);color:#34d399">
+          ✓ 현재 이용 가능
+        </div>
+        <h3 class="text-white font-bold text-xl mb-1">무료 베타</h3>
+        <div class="text-4xl font-extrabold text-gradient mb-1">₩0</div>
+        <p class="text-slate-500 text-xs mb-5">결제 정보 불필요 · 언제든 수신 해제 가능</p>
+        <ul class="space-y-2.5 mb-7">
+          <li class="flex items-center gap-2 text-slate-300 text-sm">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#34d399" stroke-width="1.2"/><path d="M4.5 7l2 2 3-3" stroke="#34d399" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            데일리 MAG7 브리핑 무료 수신
+          </li>
+          <li class="flex items-center gap-2 text-slate-300 text-sm">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#34d399" stroke-width="1.2"/><path d="M4.5 7l2 2 3-3" stroke="#34d399" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            루머·확인됨·해석 배지 구분
+          </li>
+          <li class="flex items-center gap-2 text-slate-300 text-sm">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#34d399" stroke-width="1.2"/><path d="M4.5 7l2 2 3-3" stroke="#34d399" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            샘플 브리핑 즉시 확인
+          </li>
+          <li class="flex items-center gap-2 text-slate-300 text-sm">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#34d399" stroke-width="1.2"/><path d="M4.5 7l2 2 3-3" stroke="#34d399" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            정식 유료화 전 사전 안내 우선 제공
+          </li>
+        </ul>
+        <a href="#signup" class="btn-primary block text-center text-white font-bold text-sm py-3 rounded-xl">
+          오늘의 MAG7 브리핑 무료로 받기
+        </a>
+      </div>
+
+      <!-- Premium Preview Card -->
+      <div class="rounded-2xl p-7 relative" style="background:rgba(13,28,54,0.5);border:1px solid rgba(58,116,240,0.1)">
+        <div class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold mb-5" style="background:rgba(89,148,248,0.1);color:#5994f8">
+          정식 출시 예정
+        </div>
+        <h3 class="text-white font-bold text-xl mb-1">프리미엄</h3>
+        <div class="text-4xl font-extrabold text-slate-500 mb-1">₩14,900<span class="text-xl font-normal">/월</span></div>
+        <p class="text-slate-600 text-xs mb-5">정식 출시 후 적용 예정</p>
+        <ul class="space-y-2.5 mb-7">
+          <li class="flex items-center gap-2 text-slate-500 text-sm">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#475569" stroke-width="1.2"/><path d="M4.5 7l2 2 3-3" stroke="#475569" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            실시간 알림 (이슈 발생 즉시)
+          </li>
+          <li class="flex items-center gap-2 text-slate-500 text-sm">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#475569" stroke-width="1.2"/><path d="M4.5 7l2 2 3-3" stroke="#475569" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            심층 분석 리포트
+          </li>
+          <li class="flex items-center gap-2 text-slate-500 text-sm">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#475569" stroke-width="1.2"/><path d="M4.5 7l2 2 3-3" stroke="#475569" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            프리미엄 대시보드 전체 이용
+          </li>
+          <li class="flex items-center gap-2 text-slate-500 text-sm">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#475569" stroke-width="1.2"/><path d="M4.5 7l2 2 3-3" stroke="#475569" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            종목 커스텀 알림 설정
+          </li>
+        </ul>
+        <div class="block text-center text-slate-600 font-semibold text-sm py-3 rounded-xl border border-slate-700">
+          베타 사용자 우선 전환 안내 예정
+        </div>
+      </div>
+    </div>
+
+    <!-- Why free now -->
+    <div class="mt-8 glass-card rounded-2xl p-5 sm:p-6">
+      <h4 class="text-white font-semibold text-sm mb-2">💡 지금 왜 결제가 필요 없나요?</h4>
+      <p class="text-slate-400 text-sm leading-relaxed">
+        어떤 종목, 어떤 유형의 정보에 투자자들이 가장 많이 반응하는지를 먼저 확인하는 단계입니다. 실제 사용자의 피드백을 바탕으로 정식 서비스를 만들기 위해, 지금은 최대한 많은 분들이 무료로 직접 경험해보시길 바랍니다.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FAQ SECTION
+============================================================ -->
+<section id="faq" class="section-alt py-20 md:py-28">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6">
+
+    <div class="text-center mb-12">
+      <span class="text-xs font-semibold text-brand-400 uppercase tracking-widest mb-3 block">FAQ</span>
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">자주 묻는 질문</h2>
+    </div>
+
+    <div class="space-y-3" id="faq-list">
+
+      <div class="faq-item glass-card rounded-2xl overflow-hidden">
+        <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left" onclick="toggleFAQ(this)">
+          <span class="text-white font-semibold text-sm pr-4">지금 쓰는 X, 레딧, 뉴스 앱 대신 왜 이걸 써야 하나요?</span>
+          <svg class="faq-icon shrink-0 w-5 h-5 text-slate-500 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-answer px-5 text-slate-400 text-sm leading-relaxed">
+          <div class="pb-5">X·레딧·뉴스 앱은 모두 좋은 도구입니다. 하지만 MAG7 이슈를 빠르게 정리하려면 4~5개를 직접 오가야 하고, 루머와 뉴스가 섞여 있어 판단에 시간이 걸립니다. MagPulse는 그 과정을 하나의 브리핑으로 대체합니다. 기존 도구를 없애는 게 아니라, 매일 1~2시간의 탐색 시간을 3분으로 줄이는 것입니다.</div>
+        </div>
+      </div>
+
+      <div class="faq-item glass-card rounded-2xl overflow-hidden">
+        <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left" onclick="toggleFAQ(this)">
+          <span class="text-white font-semibold text-sm pr-4">무료로 어디까지 가능한가요?</span>
+          <svg class="faq-icon shrink-0 w-5 h-5 text-slate-500 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-answer px-5 text-slate-400 text-sm leading-relaxed">
+          <div class="pb-5">현재 무료 베타 기간 동안은 데일리 MAG7 브리핑 수신, 루머·뉴스·해석 배지 구분, 샘플 브리핑 확인이 모두 무료입니다. 실시간 알림, 심층 분석 리포트, 프리미엄 대시보드는 정식 출시(월 14,900원 예정) 이후에 제공됩니다. 지금 신청한 분들에게는 유료 전환 전 별도로 사전 안내드립니다.</div>
+        </div>
+      </div>
+
+      <div class="faq-item glass-card rounded-2xl overflow-hidden">
+        <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left" onclick="toggleFAQ(this)">
+          <span class="text-white font-semibold text-sm pr-4">기존에 쓰던 증권 앱이나 HTS와 연동되나요?</span>
+          <svg class="faq-icon shrink-0 w-5 h-5 text-slate-500 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-answer px-5 text-slate-400 text-sm leading-relaxed">
+          <div class="pb-5">현재 MagPulse는 별도 앱이나 HTS와의 직접 연동 기능은 제공하지 않습니다. 이메일 브리핑 형태로 제공되므로 기존 사용 환경과 관계없이 바로 이용할 수 있습니다. 브리핑의 정보는 본인의 투자 판단에 참고 자료로 활용하시면 됩니다.</div>
+        </div>
+      </div>
+
+      <div class="faq-item glass-card rounded-2xl overflow-hidden">
+        <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left" onclick="toggleFAQ(this)">
+          <span class="text-white font-semibold text-sm pr-4">투자 추천 서비스인가요?</span>
+          <svg class="faq-icon shrink-0 w-5 h-5 text-slate-500 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-answer px-5 text-slate-400 text-sm leading-relaxed">
+          <div class="pb-5">아닙니다. MagPulse는 정보 정리 및 해석 보조 도구입니다. "사세요" "파세요"를 절대 말하지 않습니다. MAG7 관련 루머·뉴스를 정리하고 주가 영향 가능성을 해석하는 참고 자료를 제공할 뿐이며, 최종 투자 판단과 책임은 항상 사용자 본인에게 있습니다.</div>
+        </div>
+      </div>
+
+      <div class="faq-item glass-card rounded-2xl overflow-hidden">
+        <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left" onclick="toggleFAQ(this)">
+          <span class="text-white font-semibold text-sm pr-4">MAG7만 다루면 너무 좁지 않나요?</span>
+          <svg class="faq-icon shrink-0 w-5 h-5 text-slate-500 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-answer px-5 text-slate-400 text-sm leading-relaxed">
+          <div class="pb-5">MAG7(테슬라·엔비디아·애플·마이크로소프트·아마존·메타·알파벳)은 미국 증시 시가총액의 30% 이상을 차지하는 종목들입니다. 범위를 좁혔기 때문에 더 깊고 빠르게 추적할 수 있습니다. 너무 많은 것을 조금씩 다루는 것보다, 가장 많은 투자자가 관심을 갖는 종목을 깊게 다루는 것이 MagPulse의 철학입니다.</div>
+        </div>
+      </div>
+
+      <div class="faq-item glass-card rounded-2xl overflow-hidden">
+        <button class="faq-btn w-full flex items-center justify-between px-5 py-4 text-left" onclick="toggleFAQ(this)">
+          <span class="text-white font-semibold text-sm pr-4">얼마나 자주 업데이트되나요?</span>
+          <svg class="faq-icon shrink-0 w-5 h-5 text-slate-500 transition-transform" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="faq-answer px-5 text-slate-400 text-sm leading-relaxed">
+          <div class="pb-5">데일리 브리핑은 매일 장 시작 전(한국 시간 오전 기준) 발송됩니다. 베타 기간에는 주요 이슈 발생 시 추가 업데이트가 있을 수 있습니다. 실시간 알림은 정식 프리미엄 플랜에서 제공될 예정입니다.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SIGNUP (CTA FORM) SECTION
+============================================================ -->
+<section id="signup" class="py-20 md:py-28">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+
+    <!-- Glow -->
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full" style="background:radial-gradient(circle,rgba(37,88,228,0.12) 0%,transparent 65%);"></div>
+    </div>
+
+    <span class="text-xs font-semibold text-brand-400 uppercase tracking-widest mb-4 block">무료 신청</span>
+
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4 leading-tight">
+      오늘 중요한 MAG7 이슈,<br/>
+      <span class="text-gradient">3분 안에 파악하세요.</span>
+    </h2>
+
+    <!-- Checklist -->
+    <div class="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+      <div class="flex items-center gap-2 text-slate-300 text-sm">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#34d399" stroke-width="1.3"/><path d="M5 8l2.5 2.5L11 5.5" stroke="#34d399" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        루머·뉴스·해석 한 화면에
+      </div>
+      <div class="flex items-center gap-2 text-slate-300 text-sm">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#34d399" stroke-width="1.3"/><path d="M5 8l2.5 2.5L11 5.5" stroke="#34d399" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        MAG7 7개 종목 매일 추적
+      </div>
+      <div class="flex items-center gap-2 text-slate-300 text-sm">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#34d399" stroke-width="1.3"/><path d="M5 8l2.5 2.5L11 5.5" stroke="#34d399" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        카드 등록 없음 · 완전 무료
+      </div>
+    </div>
+
+    <!-- Form card -->
+    <div class="glass-card rounded-2xl p-6 sm:p-8 relative z-10">
+      <form id="signup-form" onsubmit="handleSignup(event)">
+        <label class="block text-slate-400 text-sm text-left mb-2" for="email">이메일 주소</label>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="your@email.com"
+            class="flex-1 bg-navy-900 border border-white/10 rounded-xl px-4 py-3.5 text-white text-sm placeholder-slate-600 focus:outline-none focus:border-brand-500 transition-colors"
+          />
+          <button type="submit" class="btn-primary text-white font-bold text-sm px-6 py-3.5 rounded-xl whitespace-nowrap">
+            오늘의 MAG7 브리핑 무료로 받기
+          </button>
+        </div>
+      </form>
+
+      <!-- Success message (hidden) -->
+      <div id="signup-success" class="hidden text-center py-4">
+        <div class="inline-flex items-center gap-2 text-emerald-400 font-semibold text-sm">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="8" stroke="#34d399" stroke-width="1.5"/><path d="M5.5 9l3 3L13 6" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          신청 완료! 샘플 브리핑을 이메일로 보내드립니다 🎉
+        </div>
+      </div>
+
+      <p class="text-slate-600 text-xs mt-4">
+        1분 내 신청 &nbsp;·&nbsp; 카드 등록 없음 &nbsp;·&nbsp; 베타 무료 &nbsp;·&nbsp; 언제든 수신 해제 가능
+      </p>
+    </div>
+
+    <!-- Note -->
+    <p class="text-slate-600 text-xs mt-5">
+      무료 베타 신청자에게 정식 유료화 전 사전 안내를 우선 제공합니다.
+    </p>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FINAL CTA SECTION
+============================================================ -->
+<section class="section-alt py-16 md:py-20">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+    <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3">
+      MAG7 투자자라면, <span class="text-gradient">한 번은 확인해야 할 브리핑</span>
+    </h2>
+    <p class="text-slate-400 text-sm mb-8 max-w-md mx-auto">신청에 1분도 걸리지 않습니다. 결제도 필요 없습니다. 오늘 바로 시작하세요.</p>
+    <a href="#signup" class="btn-primary inline-flex items-center gap-2 text-white font-bold text-base px-8 py-4 rounded-xl w-full sm:w-auto justify-center">
+      오늘의 MAG7 브리핑 무료로 받기
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+    </a>
+    <p class="text-slate-600 text-xs mt-4">카드 등록 없음 &nbsp;·&nbsp; 베타 무료 &nbsp;·&nbsp; 무료 베타 신청자 우선 안내</p>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="py-12 border-t border-white/5">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+    <div class="grid sm:grid-cols-3 gap-8 mb-10">
+
+      <!-- Brand -->
+      <div>
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:linear-gradient(135deg,#3a74f0,#22d3ee)">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 2L13 5.5V10.5L8 14L3 10.5V5.5L8 2Z" fill="white" opacity="0.9"/><path d="M8 5L11 6.8V10.2L8 12L5 10.2V6.8L8 5Z" fill="white"/></svg>
+          </div>
+          <span class="text-white font-bold text-base">MagPulse</span>
+        </div>
+        <p class="text-slate-500 text-xs leading-relaxed max-w-xs">
+          MAG7 투자자를 위한 소셜 루머·뉴스·주가 영향 해석 브리핑 서비스
+        </p>
+      </div>
+
+      <!-- Links -->
+      <div>
+        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-3">바로가기</p>
+        <div class="space-y-2">
+          <a href="#features"  class="block text-slate-500 text-sm hover:text-slate-300 transition-colors">기능 소개</a>
+          <a href="#proof"     class="block text-slate-500 text-sm hover:text-slate-300 transition-colors">브리핑 예시</a>
+          <a href="#pricing"   class="block text-slate-500 text-sm hover:text-slate-300 transition-colors">가격 안내</a>
+          <a href="#faq"       class="block text-slate-500 text-sm hover:text-slate-300 transition-colors">FAQ</a>
+          <a href="#signup"    class="block text-slate-500 text-sm hover:text-slate-300 transition-colors">무료 신청</a>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-3">문의</p>
+        <p class="text-slate-500 text-sm mb-3">서비스 관련 문의는 아래로 연락주세요.</p>
+        <a href="mailto:hello@magpulse.io" class="text-brand-400 text-sm hover:text-brand-300 transition-colors">hello@magpulse.io</a>
+        <div class="mt-4">
+          <a href="#signup" class="inline-flex items-center gap-1.5 text-xs text-brand-400 hover:text-brand-300 transition-colors font-medium">
+            무료 브리핑 신청하기
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h8M7 3l3 3-3 3"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider mb-6"></div>
+
+    <!-- Disclaimer -->
+    <div class="glass-card-light rounded-xl px-5 py-4 mb-6">
+      <p class="text-slate-600 text-xs leading-relaxed">
+        <strong class="text-slate-500">투자 유의사항:</strong>
+        MagPulse는 투자 권유가 아닌 정보 정리 및 해석 보조 도구입니다. 브리핑에 포함된 내용은 참고용이며 특정 종목의 매수·매도를 권장하지 않습니다. 최종 투자 판단과 책임은 사용자 본인에게 있습니다. 과거 정보가 미래 수익을 보장하지 않습니다.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-600 text-xs">
+      <span>© 2025 MagPulse. All rights reserved.</span>
+      <div class="flex gap-4">
+        <a href="#" class="hover:text-slate-400 transition-colors">개인정보처리방침</a>
+        <a href="#" class="hover:text-slate-400 transition-colors">이용약관</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ============================================================
+     JAVASCRIPT — Mobile menu / FAQ accordion / Signup
+============================================================ -->
+<script>
+  // Mobile menu toggle
+  document.getElementById('menu-btn').addEventListener('click', function () {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('open');
+  });
+
+  function closeMobileMenu() {
+    document.getElementById('mobile-menu').classList.remove('open');
+  }
+
+  // FAQ accordion
+  function toggleFAQ(btn) {
+    const answer = btn.nextElementSibling;
+    const icon   = btn.querySelector('.faq-icon');
+    const isOpen = answer.classList.contains('open');
+
+    // Close all
+    document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+    document.querySelectorAll('.faq-icon').forEach(i => i.style.transform = 'rotate(0deg)');
+
+    // Open clicked if not already open
+    if (!isOpen) {
+      answer.classList.add('open');
+      icon.style.transform = 'rotate(180deg)';
+    }
+  }
+
+  // Signup form
+  function handleSignup(e) {
+    e.preventDefault();
+    const form    = document.getElementById('signup-form');
+    const success = document.getElementById('signup-success');
+    form.style.display    = 'none';
+    success.style.display = 'block';
+  }
+
+  // Smooth scroll for all anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        const offset = 72; // nav height
+        const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
