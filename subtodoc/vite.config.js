@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  base: '/subtodoc/',
+  base: '/circle-project/',
   plugins: [react()],
   test: {
     environment: 'jsdom',

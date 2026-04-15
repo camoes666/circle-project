@@ -61,4 +61,10 @@ describe('generateDocument', () => {
       generateDocument('자막', '프롬프트', { provider: 'openai', groqApiKey: 'key', geminiApiKey: '' })
     ).rejects.toThrow('지원하지 않는 provider')
   })
+
+  test('자막이 80000글자를 초과하면 청킹하여 여러 번 호출한다', async () => {
+    const longTranscript = 'a'.repeat(160001) // CHUNK_SIZE(80000) * 2 초과
+    const result = await generateDocument(longTranscript, '프롬프트', groqSettings)
+    expect(result).toBe('Groq 결과물')
+  })
 })
