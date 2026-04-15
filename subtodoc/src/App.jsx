@@ -1,121 +1,88 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import UrlInput from './components/UrlInput'
+import FormatSelector from './components/FormatSelector'
+import ResultViewer from './components/ResultViewer'
+import ExportButtons from './components/ExportButtons'
+import SettingsModal from './components/SettingsModal'
+import { useSettings } from './hooks/useSettings'
+import { extractVideoId, fetchTranscript } from './services/transcript'
+import { buildPrompt } from './services/prompts'
+import { generateDocument } from './services/ai'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const { settings, updateSettings } = useSettings()
+  const [url, setUrl] = useState('')
+  const [format, setFormat] = useState('summary')
+  const [result, setResult] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [showSettings, setShowSettings] = useState(false)
+
+  const handleConvert = async () => {
+    setError('')
+    setResult('')
+    const videoId = extractVideoId(url)
+    if (!videoId) {
+      setError('유효한 YouTube URL을 입력해주세요.')
+      return
+    }
+    setLoading(true)
+    try {
+      const transcript = await fetchTranscript(videoId)
+      const prompt = buildPrompt(format, settings.language)
+      const doc = await generateDocument(transcript, prompt, settings)
+      setResult(doc)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-950 text-gray-100">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
+        <h1 className="text-xl font-bold tracking-tight">SubToDoc</h1>
         <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+          onClick={() => setShowSettings(true)}
+          aria-label="설정"
+          className="text-gray-400 hover:text-gray-100 transition-colors text-xl"
         >
-          Count is {count}
+          ⚙️
         </button>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
+      <main className="max-w-2xl mx-auto px-6 py-8 space-y-6">
+        <UrlInput value={url} onChange={setUrl} />
+        <FormatSelector selected={format} onChange={setFormat} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {error && (
+          <p className="text-red-400 text-sm">{error}</p>
+        )}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        <button
+          onClick={handleConvert}
+          disabled={loading || !url}
+          className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:cursor-not-allowed rounded-lg font-medium transition-colors"
+        >
+          {loading ? '변환 중...' : '변환하기'}
+        </button>
+
+        {result && (
+          <>
+            <ResultViewer content={result} />
+            <ExportButtons content={result} />
+          </>
+        )}
+      </main>
+
+      {showSettings && (
+        <SettingsModal
+          settings={settings}
+          onSave={updateSettings}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
+    </div>
   )
 }
-
-export default App
