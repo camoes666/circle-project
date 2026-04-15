@@ -1,0 +1,298 @@
+{
+  "main": {
+    "id": "e2f58e557eb0e18e",
+    "type": "split",
+    "children": [
+      {
+        "id": "90aaf43c5a604ef0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "55b116f3cdda8247",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "지식/랜딩페이지 필수 사항.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "랜딩페이지 필수 사항"
+            }
+          },
+          {
+            "id": "f2f861854b0ff22f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "스타트업 프로필 생성기.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "스타트업 프로필 생성기"
+            }
+          },
+          {
+            "id": "fcc4458e43400d1c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "랜딩페이지 문서 생성기.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "랜딩페이지 문서 생성기"
+            }
+          },
+          {
+            "id": "3ebdd102dc7ac802",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "랜딩페이지 프롬프트.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "랜딩페이지 프롬프트"
+            }
+          },
+          {
+            "id": "cc8112cec553a2c6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "랜딩페이지 구성 요소.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "랜딩페이지 구성 요소"
+            }
+          },
+          {
+            "id": "e8d414f806a22cf6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "무제.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "무제"
+            }
+          },
+          {
+            "id": "3b2acc23e3fa3025",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "무제 1.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "무제 1"
+            }
+          },
+          {
+            "id": "65dbe11c5278ee59",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "무제.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "무제"
+            }
+          }
+        ],
+        "currentTab": 7
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "1a3288efcb813335",
+    "type": "split",
+    "children": [
+      {
+        "id": "7461963a38f34033",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "27ade107dc06f037",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "파일 탐색기"
+            }
+          },
+          {
+            "id": "17d8187db3c745e6",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "검색"
+            }
+          },
+          {
+            "id": "07d257dbac8e9649",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "북마크"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "c064e00f5bab969f",
+    "type": "split",
+    "children": [
+      {
+        "id": "2a236ae3b3123630",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "66bf67db255b6639",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "디자인은 디자인을 분석해서 디자인 기준을 만들어야됨  각 부분의 이름을 아는게 중요하당.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "디자인은 디자인을 분석해서 디자인 기준을 만들어야됨  각 부분의 이름을 아는게 중요하당 의 백링크"
+            }
+          },
+          {
+            "id": "8e60f70542151be4",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "디자인은 디자인을 분석해서 디자인 기준을 만들어야됨  각 부분의 이름을 아는게 중요하당.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "디자인은 디자인을 분석해서 디자인 기준을 만들어야됨  각 부분의 이름을 아는게 중요하당 의 나가는 링크"
+            }
+          },
+          {
+            "id": "ae00eb1c793184b4",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "태그"
+            }
+          },
+          {
+            "id": "a243e533901e1821",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "모든 속성"
+            }
+          },
+          {
+            "id": "d23a0200c3d8e1fc",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "디자인은 디자인을 분석해서 디자인 기준을 만들어야됨  각 부분의 이름을 아는게 중요하당.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "디자인은 디자인을 분석해서 디자인 기준을 만들어야됨  각 부분의 이름을 아는게 중요하당 의 개요"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:빠른 전환기 열기": false,
+      "graph:그래프 뷰 열기": false,
+      "canvas:새 캔버스 만들기": false,
+      "daily-notes:오늘의 일일 노트 열기": false,
+      "templates:템플릿 삽입": false,
+      "command-palette:명령어 팔레트 열기": false,
+      "bases:새 베이스 생성하기": false
+    }
+  },
+  "active": "65dbe11c5278ee59",
+  "lastOpenFiles": [
+    "무제 1.md",
+    "스타트업 프로필 생성기.md",
+    "무제.md",
+    "랜딩페이지 프롬프트.md",
+    "랜딩페이지 문서 생성기.md",
+    "랜딩페이지 구성 요소.md",
+    "디자인은 디자인을 분석해서 디자인 기준을 만들어야됨  각 부분의 이름을 아는게 중요하당.md",
+    "지식/랜딩페이지 필수 사항.md",
+    "프롬프트",
+    "지식"
+  ]
+}
