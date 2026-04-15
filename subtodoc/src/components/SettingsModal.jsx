@@ -2,6 +2,12 @@ import { useState } from 'react'
 
 const LANGUAGES = ['한국어', '영어', '일본어', '중국어']
 
+const TRANSCRIPT_PROVIDERS = [
+  { id: 'supadata', label: 'Supadata (무료 API)' },
+  { id: 'local',    label: '로컬 Python 서버' },
+  { id: 'auto',     label: '자동 (불안정)' },
+]
+
 export default function SettingsModal({ settings, onSave, onClose }) {
   const [local, setLocal] = useState({ ...settings })
 
@@ -11,57 +17,126 @@ export default function SettingsModal({ settings, onSave, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 w-full max-w-md space-y-4">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 overflow-y-auto py-8">
+      <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 w-full max-w-md space-y-5">
         <h2 className="text-lg font-semibold">설정</h2>
 
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">AI Provider</label>
-          <div className="flex gap-2">
-            {['groq', 'gemini'].map(p => (
-              <button
-                key={p}
-                onClick={() => setLocal(l => ({ ...l, provider: p }))}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  local.provider === p
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                }`}
-              >
-                {p === 'groq' ? 'Groq (기본)' : 'Gemini Flash'}
-              </button>
-            ))}
+        {/* ── 자막 소스 ─────────────────────────────── */}
+        <section className="space-y-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">자막 소스</h3>
+
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">자막 가져오기 방법</label>
+            <div className="flex flex-col gap-1.5">
+              {TRANSCRIPT_PROVIDERS.map(p => (
+                <button
+                  key={p.id}
+                  onClick={() => setLocal(l => ({ ...l, transcriptProvider: p.id }))}
+                  className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                    local.transcriptProvider === p.id
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">
-            {local.provider === 'groq' ? 'Groq' : 'Gemini'} API Key
-          </label>
-          <input
-            type="password"
-            value={local.provider === 'groq' ? local.groqApiKey : local.geminiApiKey}
-            onChange={e => {
-              const key = local.provider === 'groq' ? 'groqApiKey' : 'geminiApiKey'
-              setLocal(l => ({ ...l, [key]: e.target.value }))
-            }}
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm focus:outline-none focus:border-blue-500 text-gray-100"
-            placeholder="API 키를 입력하세요"
-          />
-        </div>
+          {local.transcriptProvider === 'supadata' && (
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">
+                Supadata API Key
+                <a
+                  href="https://supadata.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-2 text-blue-400 hover:text-blue-300 text-xs"
+                >
+                  무료 가입 →
+                </a>
+              </label>
+              <input
+                type="password"
+                value={local.supadadataApiKey}
+                onChange={e => setLocal(l => ({ ...l, supadadataApiKey: e.target.value }))}
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm focus:outline-none focus:border-blue-500 text-gray-100"
+                placeholder="sup_..."
+              />
+              <p className="text-xs text-gray-500 mt-1">무료 플랜: 10회/일. supadata.ai에서 가입 후 API 키 발급</p>
+            </div>
+          )}
 
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">출력 언어</label>
-          <select
-            value={local.language}
-            onChange={e => setLocal(l => ({ ...l, language: e.target.value }))}
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm focus:outline-none focus:border-blue-500 text-gray-100"
-          >
-            {LANGUAGES.map(lang => (
-              <option key={lang} value={lang}>{lang}</option>
-            ))}
-          </select>
-        </div>
+          {local.transcriptProvider === 'local' && (
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">로컬 서버 주소</label>
+              <input
+                type="text"
+                value={local.localServerUrl}
+                onChange={e => setLocal(l => ({ ...l, localServerUrl: e.target.value }))}
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm focus:outline-none focus:border-blue-500 text-gray-100"
+                placeholder="http://localhost:8000"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Python 서버가 <code className="text-gray-400">GET /transcript?videoId=XXX</code>를 처리해야 합니다
+              </p>
+            </div>
+          )}
+        </section>
+
+        {/* ── AI Provider ───────────────────────────── */}
+        <section className="space-y-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-500">AI 설정</h3>
+
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">AI Provider</label>
+            <div className="flex gap-2">
+              {['groq', 'gemini'].map(p => (
+                <button
+                  key={p}
+                  onClick={() => setLocal(l => ({ ...l, provider: p }))}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    local.provider === p
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  }`}
+                >
+                  {p === 'groq' ? 'Groq (기본)' : 'Gemini Flash'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">
+              {local.provider === 'groq' ? 'Groq' : 'Gemini'} API Key
+            </label>
+            <input
+              type="password"
+              value={local.provider === 'groq' ? local.groqApiKey : local.geminiApiKey}
+              onChange={e => {
+                const key = local.provider === 'groq' ? 'groqApiKey' : 'geminiApiKey'
+                setLocal(l => ({ ...l, [key]: e.target.value }))
+              }}
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm focus:outline-none focus:border-blue-500 text-gray-100"
+              placeholder="API 키를 입력하세요"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">출력 언어</label>
+            <select
+              value={local.language}
+              onChange={e => setLocal(l => ({ ...l, language: e.target.value }))}
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-sm focus:outline-none focus:border-blue-500 text-gray-100"
+            >
+              {LANGUAGES.map(lang => (
+                <option key={lang} value={lang}>{lang}</option>
+              ))}
+            </select>
+          </div>
+        </section>
 
         <div className="flex justify-end gap-2 pt-2">
           <button

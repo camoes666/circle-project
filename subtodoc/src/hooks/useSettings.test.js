@@ -12,6 +12,9 @@ test('localStorage가 비어있으면 기본값을 반환한다', () => {
     groqApiKey: '',
     geminiApiKey: '',
     language: '한국어',
+    transcriptProvider: 'supadata',
+    supadadataApiKey: '',
+    localServerUrl: 'http://localhost:8000',
   })
 })
 

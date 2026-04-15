@@ -7,6 +7,9 @@ const DEFAULTS = {
   groqApiKey: '',
   geminiApiKey: '',
   language: '한국어',
+  transcriptProvider: 'supadata',
+  supadadataApiKey: '',
+  localServerUrl: 'http://localhost:8000',
 }
 
 export function useSettings() {

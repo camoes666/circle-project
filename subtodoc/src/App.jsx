@@ -47,7 +47,7 @@ export default function App() {
     }
     setLoading(true)
     try {
-      const transcript = await fetchTranscript(videoId)
+      const transcript = await fetchTranscript(videoId, settings)
       const prompt = buildPrompt(format, settings.language)
       const doc = await generateDocument(transcript, prompt, settings)
       setResult(doc)

@@ -13,8 +13,7 @@ export function extractVideoId(url) {
   return null
 }
 
-// 브라우저에서 YouTube InnerTube API를 직접 호출해 자막 URL 획득
-// (브라우저 = 일반 사용자 IP → 봇 차단 없음)
+// ── 브라우저에서 YouTube InnerTube API 직접 호출 (자동 모드)
 async function getCaptionUrl(videoId) {
   const res = await fetch('https://www.youtube.com/youtubei/v1/player', {
     method: 'POST',
@@ -36,7 +35,6 @@ async function getCaptionUrl(videoId) {
     throw new Error('이 영상에는 자막이 없습니다.')
   }
 
-  // 한국어 → 영어 → 자동생성 → 첫 번째 순으로 선택
   const track =
     tracks.find(t => t.languageCode === 'ko') ||
     tracks.find(t => t.languageCode === 'en') ||
@@ -58,13 +56,62 @@ function parseXml(xml) {
     .trim()
 }
 
-export async function fetchTranscript(videoId) {
-  // 1. 브라우저에서 자막 URL 획득 (사용자 IP 사용 → 봇 차단 없음)
-  const captionUrl = await getCaptionUrl(videoId)
+// ── Supadata API (무료 10회/일, supadata.ai)
+export async function fetchFromSupadata(videoId, apiKey) {
+  const res = await fetch(
+    `https://api.supadata.ai/v1/youtube/transcript?videoId=${videoId}`,
+    { headers: { 'x-api-key': apiKey } }
+  )
 
-  // 2. Worker를 CORS 프록시로 사용해 자막 XML 다운로드
+  if (res.status === 401) throw new Error('Supadata API 키가 올바르지 않습니다.')
+  if (res.status === 404 || res.status === 422)
+    throw new Error('이 영상에는 자막이 없습니다.')
+  if (!res.ok) throw new Error(`Supadata API 오류: ${res.status}`)
+
+  const data = await res.json()
+  // content가 문자열인 경우 (text=true 파라미터)
+  if (typeof data.content === 'string') return data.content.trim()
+  // content가 배열인 경우
+  if (Array.isArray(data.content))
+    return data.content.map(c => (typeof c === 'string' ? c : c.text)).join(' ').trim()
+
+  throw new Error('Supadata API 응답 형식 오류')
+}
+
+// ── 로컬 Python 서버 (나중에 직접 구축)
+// 서버 예시: GET /transcript?videoId=xxx → {"transcript": "..."}
+export async function fetchFromLocalServer(videoId, serverUrl) {
+  const base = serverUrl.replace(/\/$/, '')
+  const res = await fetch(`${base}/transcript?videoId=${videoId}`)
+
+  if (!res.ok) throw new Error(`로컬 서버 오류: ${res.status}`)
+
+  const data = await res.json()
+  const text = data.transcript ?? data.text ?? data.content
+  if (typeof text === 'string') return text.trim()
+  throw new Error('로컬 서버 응답 형식 오류')
+}
+
+// ── 통합 진입점
+export async function fetchTranscript(videoId, settings = {}) {
+  const {
+    transcriptProvider = 'auto',
+    supadadataApiKey = '',
+    localServerUrl = 'http://localhost:8000',
+  } = settings
+
+  if (transcriptProvider === 'supadata') {
+    if (!supadadataApiKey) throw new Error('Supadata API 키를 설정에서 입력해주세요.')
+    return fetchFromSupadata(videoId, supadadataApiKey)
+  }
+
+  if (transcriptProvider === 'local') {
+    return fetchFromLocalServer(videoId, localServerUrl)
+  }
+
+  // auto: 브라우저 직접 호출 → Worker CORS 프록시
+  const captionUrl = await getCaptionUrl(videoId)
   const res = await fetch(`${WORKER_URL}?url=${encodeURIComponent(captionUrl)}`)
   if (!res.ok) throw new Error(`자막을 가져오지 못했습니다. (${res.status})`)
-
   return parseXml(await res.text())
 }
