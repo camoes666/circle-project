@@ -111,16 +111,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "무제.md",
+                "file": "지식/랜딩페이지 필수 사항.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "무제"
+              "title": "랜딩페이지 필수 사항"
+            }
+          },
+          {
+            "id": "12e30e9e463d779e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "지식/2026년 4월 16일 바이브코딩 수업 내용.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "2026년 4월 16일 바이브코딩 수업 내용"
             }
           }
         ],
-        "currentTab": 7
+        "currentTab": 8
       }
     ],
     "direction": "vertical"
@@ -282,17 +296,48 @@
       "bases:새 베이스 생성하기": false
     }
   },
-  "active": "65dbe11c5278ee59",
+  "active": "12e30e9e463d779e",
   "lastOpenFiles": [
-    "무제 1.md",
-    "스타트업 프로필 생성기.md",
-    "무제.md",
-    "랜딩페이지 프롬프트.md",
-    "랜딩페이지 문서 생성기.md",
-    "랜딩페이지 구성 요소.md",
-    "디자인은 디자인을 분석해서 디자인 기준을 만들어야됨  각 부분의 이름을 아는게 중요하당.md",
-    "지식/랜딩페이지 필수 사항.md",
-    "프롬프트",
-    "지식"
+    "지식/슈퍼파워즈 스킬 가이드.md",
+    "지식/2026년 4월 16일 바이브코딩 수업 내용.md",
+    "지식/AI와 기획하기.md",
+    "subtodoc/src/test/setup.js",
+    "subtodoc/src/test",
+    "subtodoc/postcss.config.js",
+    "subtodoc/tailwind.config.js",
+    "subtodoc/node_modules/tailwindcss/nesting/index.js",
+    "subtodoc/node_modules/tailwindcss/nesting/index.d.ts",
+    "subtodoc/node_modules/tailwindcss/nesting",
+    "subtodoc/node_modules/tailwindcss/scripts/type-utils.js",
+    "subtodoc/node_modules/tailwindcss/scripts/release-channel.js",
+    "subtodoc/node_modules/tailwindcss/scripts/release-notes.js",
+    "subtodoc/node_modules/pirates/README.md",
+    "subtodoc/node_modules/any-promise/README.md",
+    "subtodoc/node_modules/tailwindcss/src/postcss-plugins/nesting/README.md",
+    "subtodoc/node_modules/tailwindcss/src/value-parser/README.md",
+    "subtodoc/node_modules/resolve/SECURITY.md",
+    "subtodoc/node_modules/dlv/README.md",
+    "subtodoc/node_modules/tailwindcss/lib/postcss-plugins/nesting/README.md",
+    "subtodoc/node_modules/tailwindcss/lib/value-parser/README.md",
+    "subtodoc/node_modules/normalize-path/README.md",
+    "subtodoc/node_modules/postcss-selector-parser/README.md",
+    "subtodoc/node_modules/postcss-selector-parser/CHANGELOG.md",
+    "subtodoc/node_modules/postcss-selector-parser/API.md",
+    "subtodoc/node_modules/postcss-nested/README.md",
+    "subtodoc/node_modules/sucrase/node_modules/commander/Readme.md",
+    "subtodoc/node_modules/sucrase/node_modules/commander/CHANGELOG.md",
+    "subtodoc/node_modules/sucrase/README.md",
+    "subtodoc/node_modules/postcss-load-config/README.md",
+    "subtodoc/node_modules/ts-interface-checker/README.md",
+    "subtodoc/node_modules/read-cache/README.md",
+    "subtodoc/node_modules/es-errors/README.md",
+    "subtodoc/node_modules/es-errors/CHANGELOG.md",
+    "subtodoc/node_modules/hasown/README.md",
+    "subtodoc/node_modules/hasown/CHANGELOG.md",
+    "subtodoc/src/assets/react.svg",
+    "subtodoc/src/assets/vite.svg",
+    "subtodoc/src/assets/hero.png",
+    "subtodoc/public/icons.svg",
+    "subtodoc/public/favicon.svg"
   ]
 }
