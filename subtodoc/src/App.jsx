@@ -270,6 +270,7 @@ export default function App() {
             <ResultViewer
               content={result}
               videoId={activeTab === 'url' ? videoId : null}
+              format={format}
             />
             <ExportButtons content={result} />
           </div>

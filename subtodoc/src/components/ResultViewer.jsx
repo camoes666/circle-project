@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
-function inlineMarkdown(text, videoId) {
+// ── Inline markdown helpers ─────────────────────────────────────────────────
+
+function inlineMarkdown(text, videoId, format) {
   let result = text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -9,6 +11,7 @@ function inlineMarkdown(text, videoId) {
     .replace(/\*(.+?)\*/g, '<em class="text-gray-400 italic">$1</em>')
     .replace(/`(.+?)`/g, '<code class="text-blue-300 bg-gray-800 px-1 rounded text-xs">$1</code>')
 
+  // Timestamp links — only when videoId is available
   if (videoId) {
     result = result.replace(/\[(\d{1,2}):(\d{2})\]/g, (_, mm, ss) => {
       const t = parseInt(mm) * 60 + parseInt(ss)
@@ -16,10 +19,17 @@ function inlineMarkdown(text, videoId) {
     })
   }
 
+  // LinkedIn hashtag highlight
+  if (format === 'linkedin') {
+    result = result.replace(/(#[\w가-힣]+)/g,
+      '<span class="inline-block text-blue-400 font-medium">$1</span>'
+    )
+  }
+
   return result
 }
 
-function parseMarkdown(text, videoId) {
+function parseMarkdown(text, videoId, format) {
   const lines = text.split('\n')
   const elements = []
   let listBuffer = []
@@ -31,7 +41,7 @@ function parseMarkdown(text, videoId) {
           {listBuffer.map((item, i) => (
             <li key={i} className="flex gap-2 text-gray-300 text-sm leading-relaxed">
               <span className="text-blue-400 font-bold flex-shrink-0 mt-0.5">•</span>
-              <span dangerouslySetInnerHTML={{ __html: inlineMarkdown(item, videoId) }} />
+              <span dangerouslySetInnerHTML={{ __html: inlineMarkdown(item, videoId, format) }} />
             </li>
           ))}
         </ul>
@@ -45,19 +55,19 @@ function parseMarkdown(text, videoId) {
       flushList()
       elements.push(
         <h1 key={i} className="text-xl font-bold text-white mt-6 mb-2 leading-snug"
-          dangerouslySetInnerHTML={{ __html: inlineMarkdown(line.slice(2), videoId) }} />
+          dangerouslySetInnerHTML={{ __html: inlineMarkdown(line.slice(2), videoId, format) }} />
       )
     } else if (/^## /.test(line)) {
       flushList()
       elements.push(
         <h2 key={i} className="text-base font-semibold text-gray-100 mt-5 mb-1.5 leading-snug"
-          dangerouslySetInnerHTML={{ __html: inlineMarkdown(line.slice(3), videoId) }} />
+          dangerouslySetInnerHTML={{ __html: inlineMarkdown(line.slice(3), videoId, format) }} />
       )
     } else if (/^### /.test(line)) {
       flushList()
       elements.push(
         <h3 key={i} className="text-sm font-semibold text-gray-200 mt-4 mb-1 leading-snug"
-          dangerouslySetInnerHTML={{ __html: inlineMarkdown(line.slice(4), videoId) }} />
+          dangerouslySetInnerHTML={{ __html: inlineMarkdown(line.slice(4), videoId, format) }} />
       )
     } else if (/^[-*] /.test(line)) {
       listBuffer.push(line.slice(2))
@@ -72,7 +82,7 @@ function parseMarkdown(text, videoId) {
       flushList()
       elements.push(
         <p key={i} className="text-gray-300 text-sm leading-relaxed mb-2"
-          dangerouslySetInnerHTML={{ __html: inlineMarkdown(line, videoId) }} />
+          dangerouslySetInnerHTML={{ __html: inlineMarkdown(line, videoId, format) }} />
       )
     }
   })
@@ -80,7 +90,102 @@ function parseMarkdown(text, videoId) {
   return elements
 }
 
-export default function ResultViewer({ content, videoId }) {
+// ── Twitter thread renderer ─────────────────────────────────────────────────
+
+function parseTweets(content) {
+  return content
+    .split(/\n---\n|^---$/m)
+    .map(t => t.trim())
+    .filter(Boolean)
+}
+
+function TweetCards({ content }) {
+  const tweets = parseTweets(content)
+  return (
+    <div className="space-y-3">
+      {tweets.map((tweet, i) => {
+        const charCount = tweet.length
+        const isOver = charCount > 280
+        const isWarning = !isOver && charCount > 240
+        return (
+          <div key={i} className="bg-gray-800/60 border border-gray-700/60 rounded-xl p-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-600 font-medium">
+                {i + 1} / {tweets.length}
+              </span>
+              <span className={`text-xs font-mono ${isOver ? 'text-red-400' : isWarning ? 'text-yellow-400' : 'text-gray-600'}`}>
+                {charCount} / 280
+              </span>
+            </div>
+            <p className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">{tweet}</p>
+            {/* Character gauge */}
+            <div className="h-0.5 bg-gray-700 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all ${isOver ? 'bg-red-500' : isWarning ? 'bg-yellow-500' : 'bg-blue-500'}`}
+                style={{ width: `${Math.min((charCount / 280) * 100, 100)}%` }}
+              />
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// ── Slide deck renderer ─────────────────────────────────────────────────────
+
+function parseSlides(content) {
+  return content
+    .split(/\n---\n|^---$/m)
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map((slide, i) => {
+      const lines = slide.split('\n')
+      const titleLine = lines.find(l => /^#{1,3} /.test(l))
+      const title = titleLine ? titleLine.replace(/^#+\s/, '') : `슬라이드 ${i + 1}`
+      const bullets = lines
+        .filter(l => /^[-*] /.test(l))
+        .map(l => l.replace(/^[-*] /, ''))
+      const rest = lines
+        .filter(l => !(/^#+/.test(l)) && !(/^[-*] /.test(l)) && l.trim())
+      return { title, bullets, rest, index: i + 1 }
+    })
+}
+
+function SlideCards({ content }) {
+  const slides = parseSlides(content)
+  return (
+    <div className="space-y-3">
+      {slides.map(slide => (
+        <div key={slide.index} className="bg-gray-800/40 border border-gray-700/60 rounded-xl overflow-hidden">
+          {/* Slide header */}
+          <div className="bg-blue-600/10 border-b border-gray-700/40 px-4 py-2.5 flex items-center gap-2">
+            <span className="text-xs text-blue-500 font-mono font-medium">
+              {String(slide.index).padStart(2, '0')}
+            </span>
+            <h3 className="text-sm font-semibold text-gray-100">{slide.title}</h3>
+          </div>
+          {/* Slide body */}
+          <div className="px-4 py-3 space-y-1.5">
+            {slide.bullets.map((b, i) => (
+              <div key={i} className="flex gap-2 text-sm text-gray-300">
+                <span className="text-blue-400 flex-shrink-0">▸</span>
+                <span>{b}</span>
+              </div>
+            ))}
+            {slide.rest.map((line, i) => (
+              <p key={`r${i}`} className="text-sm text-gray-400">{line}</p>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ── Main component ──────────────────────────────────────────────────────────
+
+export default function ResultViewer({ content, videoId, format }) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -96,6 +201,17 @@ export default function ResultViewer({ content, videoId }) {
     }
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const renderContent = () => {
+    if (format === 'twitter') return <TweetCards content={content} />
+    if (format === 'slides')  return <SlideCards content={content} />
+    // mindmap, linkedin, and original 4 formats all use the markdown parser
+    return (
+      <div className="space-y-0.5">
+        {parseMarkdown(content, videoId, format)}
+      </div>
+    )
   }
 
   return (
@@ -139,9 +255,7 @@ export default function ResultViewer({ content, videoId }) {
 
       {/* Content */}
       <div className="p-5 max-h-[60vh] overflow-y-auto">
-        <div className="space-y-0.5">
-          {parseMarkdown(content, videoId)}
-        </div>
+        {renderContent()}
       </div>
     </div>
   )
