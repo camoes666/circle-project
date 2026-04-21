@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import UrlInput from './components/UrlInput'
 import FormatSelector from './components/FormatSelector'
 import ResultViewer from './components/ResultViewer'
@@ -16,6 +16,14 @@ import { generateDocument } from './services/ai'
 export default function App() {
   const { settings, updateSettings } = useSettings()
   const { history, addEntry, removeEntry, clearHistory } = useHistory()
+
+  // Theme
+  const [theme, setTheme] = useState(() => localStorage.getItem('subtodoc_theme') || 'dark')
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('subtodoc_theme', theme)
+  }, [theme])
+  const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark')
 
   const [url, setUrl] = useState('')
   const [format, setFormat] = useState('summary')
@@ -113,40 +121,61 @@ export default function App() {
       : url.trim().length > 0)
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
       {/* NVIDIA green top accent line */}
-      <div className="fixed inset-x-0 top-0 h-0.5 bg-[#76b900]" />
+      <div className="fixed inset-x-0 top-0 h-0.5 bg-[#76b900] z-50" />
 
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-[#000000] border-b border-[#5e5e5e]">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <header className="sticky top-0 z-40 bg-[var(--bg)] border-b border-[var(--border)]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className="w-7 h-7 rounded-[2px] bg-[#76b900] flex items-center justify-center text-black font-bold text-sm select-none">
               S
             </span>
-            <span className="font-bold text-white tracking-tight">SubToDoc</span>
-            <span className="hidden sm:inline text-xs text-[#757575] ml-1 uppercase tracking-wider">YouTube → 문서</span>
+            <span className="font-bold text-[var(--text)] tracking-tight">SubToDoc</span>
+            <span className="hidden sm:inline text-xs text-[var(--text-muted)] ml-1 uppercase tracking-wider">YouTube → 문서</span>
           </div>
-          <button
-            onClick={() => setShowSettings(true)}
-            aria-label="설정 열기"
-            className="w-8 h-8 flex items-center justify-center rounded-[2px] text-[#a7a7a7] hover:text-white hover:bg-[#1a1a1a] border border-transparent hover:border-[#5e5e5e] transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-            </svg>
-          </button>
+          <div className="flex items-center gap-1">
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              aria-label="테마 전환"
+              className="w-8 h-8 flex items-center justify-center rounded-[2px] text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--surface)] border border-transparent hover:border-[var(--border)] transition-colors"
+            >
+              {theme === 'dark' ? (
+                /* Sun icon for switching to light */
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+              ) : (
+                /* Moon icon for switching to dark */
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+                </svg>
+              )}
+            </button>
+            {/* Settings */}
+            <button
+              onClick={() => setShowSettings(true)}
+              aria-label="설정 열기"
+              className="w-8 h-8 flex items-center justify-center rounded-[2px] text-[var(--text-secondary)] hover:text-[var(--text)] hover:bg-[var(--surface)] border border-transparent hover:border-[var(--border)] transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+              </svg>
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Main */}
-      <main className="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-4">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-4">
 
         {/* Input Card */}
-        <div className="bg-[#1a1a1a] border border-[#5e5e5e] rounded-[2px] overflow-hidden animate-fade-in" style={{ boxShadow: 'rgba(0,0,0,0.3) 0px 0px 5px 0px' }}>
+        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-[2px] overflow-hidden animate-fade-in" style={{ boxShadow: 'rgba(0,0,0,0.15) 0px 0px 5px 0px' }}>
 
           {/* Tabs */}
-          <div className="flex border-b border-[#5e5e5e]">
+          <div className="flex border-b border-[var(--border)]">
             {[
               {
                 id: 'url',
@@ -175,7 +204,7 @@ export default function App() {
                 className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold uppercase tracking-wider transition-colors ${
                   activeTab === tab.id
                     ? 'text-[#76b900] border-b-2 border-[#76b900] bg-[#76b900]/5'
-                    : 'text-[#757575] hover:text-white border-b-2 border-transparent'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text)] border-b-2 border-transparent'
                 }`}
               >
                 {tab.icon}
@@ -211,14 +240,14 @@ export default function App() {
 
             {/* Error */}
             {error && (
-              <div className="flex gap-3 p-3.5 bg-[#650b0b]/40 border border-[#e52020]/50 rounded-[2px] animate-slide-up">
+              <div className="flex gap-3 p-3.5 bg-[var(--error-bg)] border border-[var(--error-border)] rounded-[2px] animate-slide-up">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#e52020] flex-shrink-0 mt-0.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                 </svg>
                 <div className="space-y-1 text-sm">
-                  <p className="text-white font-bold">{error}</p>
+                  <p className="text-[var(--text)] font-bold">{error}</p>
                   {activeTab === 'url' && (
-                    <p className="text-[#757575]">
+                    <p className="text-[var(--text-muted)]">
                       자막 자동 가져오기 실패 —{' '}
                       <button
                         type="button"
@@ -240,8 +269,8 @@ export default function App() {
               disabled={!canConvert}
               className={`w-full h-12 rounded-[2px] font-bold text-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wider ${
                 canConvert
-                  ? 'bg-transparent border-2 border-[#76b900] text-white hover:bg-[#1eaedb] hover:border-[#1eaedb]'
-                  : 'bg-transparent border-2 border-[#5e5e5e] text-[#757575] cursor-not-allowed'
+                  ? 'bg-transparent border-2 border-[#76b900] text-[var(--text)] hover:bg-[#1eaedb] hover:border-[#1eaedb] hover:text-white'
+                  : 'bg-transparent border-2 border-[var(--border)] text-[var(--text-muted)] cursor-not-allowed'
               }`}
             >
               {loading ? (

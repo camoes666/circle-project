@@ -2,7 +2,7 @@ export default function VideoPreview({ videoId }) {
   if (!videoId) return null
 
   return (
-    <div className="rounded-[2px] overflow-hidden bg-[#000000] border border-[#5e5e5e] aspect-video animate-fade-in">
+    <div className="rounded-[2px] overflow-hidden bg-[var(--bg)] border border-[var(--border)] aspect-video animate-fade-in">
       <iframe
         src={`https://www.youtube.com/embed/${videoId}`}
         className="w-full h-full"
