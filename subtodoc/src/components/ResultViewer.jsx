@@ -7,22 +7,20 @@ function inlineMarkdown(text, videoId, format) {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/\*\*(.+?)\*\*/g, '<strong class="text-gray-100 font-semibold">$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em class="text-gray-400 italic">$1</em>')
-    .replace(/`(.+?)`/g, '<code class="text-blue-300 bg-gray-800 px-1 rounded text-xs">$1</code>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="text-white font-bold">$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em class="text-[#a7a7a7] italic">$1</em>')
+    .replace(/`(.+?)`/g, '<code class="text-[#76b900] bg-[#1a1a1a] px-1 rounded-[2px] text-xs">$1</code>')
 
-  // Timestamp links — only when videoId is available
   if (videoId) {
     result = result.replace(/\[(\d{1,2}):(\d{2})\]/g, (_, mm, ss) => {
       const t = parseInt(mm) * 60 + parseInt(ss)
-      return `<a href="https://www.youtube.com/watch?v=${videoId}&t=${t}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center font-mono text-xs px-1.5 py-0.5 bg-blue-950/50 text-blue-400 hover:text-blue-300 rounded border border-blue-800/40 hover:border-blue-600/60 transition-colors">[${mm}:${ss}]</a>`
+      return `<a href="https://www.youtube.com/watch?v=${videoId}&t=${t}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center font-mono text-xs px-1.5 py-0.5 bg-[#1a1a1a] text-[#76b900] hover:text-white rounded-[2px] border border-[#76b900]/40 hover:border-[#76b900] transition-colors">[${mm}:${ss}]</a>`
     })
   }
 
-  // LinkedIn hashtag highlight
   if (format === 'linkedin') {
     result = result.replace(/(#[\w가-힣]+)/g,
-      '<span class="inline-block text-blue-400 font-medium">$1</span>'
+      '<span class="inline-block text-[#76b900] font-bold">$1</span>'
     )
   }
 
@@ -32,21 +30,16 @@ function inlineMarkdown(text, videoId, format) {
 function parseMarkdown(text, videoId, format) {
   const lines = text.split('\n')
   const elements = []
-  // listBuffer items: { text, depth }  (depth 0 = top-level, 1 = sub-bullet)
   let listBuffer = []
 
   const flushList = () => {
     if (listBuffer.length > 0) {
       elements.push(
-        <ul key={`ul-${elements.length}`} className="space-y-1 mb-3 pl-0">
+        <ul key={`ul-${elements.length}`} className="space-y-1.5 mb-3 pl-0">
           {listBuffer.map((item, i) => (
-            <li key={i}
-              className={`flex gap-2 text-sm leading-relaxed ${
-                item.depth > 0 ? 'ml-5 text-gray-400' : 'text-gray-300'
-              }`}
-            >
-              <span className={`flex-shrink-0 mt-0.5 ${item.depth > 0 ? 'text-gray-600' : 'text-blue-400 font-bold'}`}>
-                {item.depth > 0 ? '◦' : '•'}
+            <li key={i} className={`flex gap-2 text-sm leading-relaxed ${item.depth > 0 ? 'ml-5 text-[#757575]' : 'text-[#a7a7a7]'}`}>
+              <span className={`flex-shrink-0 mt-0.5 ${item.depth > 0 ? 'text-[#5e5e5e]' : 'text-[#76b900] font-bold'}`}>
+                {item.depth > 0 ? '◦' : '▸'}
               </span>
               <span dangerouslySetInnerHTML={{ __html: inlineMarkdown(item.text, videoId, format) }} />
             </li>
@@ -61,43 +54,38 @@ function parseMarkdown(text, videoId, format) {
     if (/^# /.test(line)) {
       flushList()
       elements.push(
-        <h1 key={i} className="text-xl font-bold text-white mt-6 mb-2 leading-snug"
+        <h1 key={i} className="text-xl font-bold text-white mt-6 mb-2 leading-tight"
           dangerouslySetInnerHTML={{ __html: inlineMarkdown(line.slice(2), videoId, format) }} />
       )
     } else if (/^## /.test(line)) {
       flushList()
-      // mindmap: ## gets a subtle left-border accent for visual hierarchy
       const isMindmap = format === 'mindmap'
       elements.push(
         <h2 key={i}
-          className={`text-base font-semibold text-gray-100 mt-5 mb-1.5 leading-snug ${
-            isMindmap ? 'pl-3 border-l-2 border-blue-500/50' : ''
-          }`}
+          className={`text-base font-bold text-white mt-5 mb-1.5 leading-tight ${isMindmap ? 'pl-3 border-l-2 border-[#76b900]' : ''}`}
           dangerouslySetInnerHTML={{ __html: inlineMarkdown(line.slice(3), videoId, format) }} />
       )
     } else if (/^### /.test(line)) {
       flushList()
       elements.push(
-        <h3 key={i} className="text-sm font-semibold text-gray-200 mt-4 mb-1 leading-snug"
+        <h3 key={i} className="text-sm font-bold text-[#a7a7a7] mt-4 mb-1 leading-tight"
           dangerouslySetInnerHTML={{ __html: inlineMarkdown(line.slice(4), videoId, format) }} />
       )
     } else if (/^ {2,}[-*] /.test(line)) {
-      // indented sub-bullet (2+ spaces then - or *)
-      const text = line.replace(/^ +[-*] /, '')
-      listBuffer.push({ text, depth: 1 })
+      listBuffer.push({ text: line.replace(/^ +[-*] /, ''), depth: 1 })
     } else if (/^[-*] /.test(line)) {
       listBuffer.push({ text: line.slice(2), depth: 0 })
     } else if (/^\d+\. /.test(line)) {
       listBuffer.push({ text: line.replace(/^\d+\. /, ''), depth: 0 })
     } else if (line.trim() === '---') {
       flushList()
-      elements.push(<hr key={i} className="border-gray-700/60 my-4" />)
+      elements.push(<hr key={i} className="border-[#5e5e5e] my-4" />)
     } else if (line.trim() === '') {
       flushList()
     } else {
       flushList()
       elements.push(
-        <p key={i} className="text-gray-300 text-sm leading-relaxed mb-2"
+        <p key={i} className="text-[#a7a7a7] text-sm leading-relaxed mb-2"
           dangerouslySetInnerHTML={{ __html: inlineMarkdown(line, videoId, format) }} />
       )
     }
@@ -109,7 +97,6 @@ function parseMarkdown(text, videoId, format) {
 // ── Twitter thread renderer ─────────────────────────────────────────────────
 
 function parseTweets(content) {
-  // Accept "---" with any amount of surrounding whitespace/newlines
   return content
     .split(/\n\s*---\s*\n/)
     .map(t => t.trim())
@@ -125,21 +112,23 @@ function TweetCards({ content }) {
         const isOver = charCount > 280
         const isWarning = !isOver && charCount > 240
         return (
-          <div key={i} className="bg-gray-800/60 border border-gray-700/60 rounded-xl p-4 space-y-2">
+          <div key={i} className="bg-[#1a1a1a] border border-[#5e5e5e] rounded-[2px] p-4 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-600 font-medium">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#757575]">
                 {i + 1} / {tweets.length}
               </span>
-              <span className={`text-xs font-mono ${isOver ? 'text-red-400' : isWarning ? 'text-yellow-400' : 'text-gray-600'}`}>
+              <span className={`text-xs font-mono font-bold ${isOver ? 'text-[#e52020]' : isWarning ? 'text-[#ef9100]' : 'text-[#757575]'}`}>
                 {charCount} / 280
               </span>
             </div>
-            <p className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">{tweet}</p>
-            {/* Character gauge */}
-            <div className="h-0.5 bg-gray-700 rounded-full overflow-hidden">
+            <p className="text-sm text-white leading-relaxed whitespace-pre-wrap">{tweet}</p>
+            <div className="h-0.5 bg-[#5e5e5e] rounded-full overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all ${isOver ? 'bg-red-500' : isWarning ? 'bg-yellow-500' : 'bg-blue-500'}`}
-                style={{ width: `${Math.min((charCount / 280) * 100, 100)}%` }}
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${Math.min((charCount / 280) * 100, 100)}%`,
+                  backgroundColor: isOver ? '#e52020' : isWarning ? '#ef9100' : '#76b900',
+                }}
               />
             </div>
           </div>
@@ -152,7 +141,6 @@ function TweetCards({ content }) {
 // ── Slide deck renderer ─────────────────────────────────────────────────────
 
 function parseSlides(content) {
-  // Accept "---" with any amount of surrounding whitespace/newlines
   return content
     .split(/\n\s*---\s*\n/)
     .map(s => s.trim())
@@ -161,11 +149,8 @@ function parseSlides(content) {
       const lines = slide.split('\n')
       const titleLine = lines.find(l => /^#{1,3} /.test(l))
       const title = titleLine ? titleLine.replace(/^#+\s/, '') : `슬라이드 ${i + 1}`
-      const bullets = lines
-        .filter(l => /^[-*] /.test(l))
-        .map(l => l.replace(/^[-*] /, ''))
-      const rest = lines
-        .filter(l => !(/^#+/.test(l)) && !(/^[-*] /.test(l)) && l.trim())
+      const bullets = lines.filter(l => /^[-*] /.test(l)).map(l => l.replace(/^[-*] /, ''))
+      const rest = lines.filter(l => !(/^#+/.test(l)) && !(/^[-*] /.test(l)) && l.trim())
       return { title, bullets, rest, index: i + 1 }
     })
 }
@@ -175,24 +160,22 @@ function SlideCards({ content }) {
   return (
     <div className="space-y-3">
       {slides.map(slide => (
-        <div key={slide.index} className="bg-gray-800/40 border border-gray-700/60 rounded-xl overflow-hidden">
-          {/* Slide header */}
-          <div className="bg-blue-600/10 border-b border-gray-700/40 px-4 py-2.5 flex items-center gap-2">
-            <span className="text-xs text-blue-500 font-mono font-medium">
+        <div key={slide.index} className="bg-[#1a1a1a] border border-[#5e5e5e] rounded-[2px] overflow-hidden">
+          <div className="border-b border-[#5e5e5e] px-4 py-2.5 flex items-center gap-3" style={{ borderLeft: '2px solid #76b900' }}>
+            <span className="text-xs font-bold font-mono text-[#76b900]">
               {String(slide.index).padStart(2, '0')}
             </span>
-            <h3 className="text-sm font-semibold text-gray-100">{slide.title}</h3>
+            <h3 className="text-sm font-bold text-white">{slide.title}</h3>
           </div>
-          {/* Slide body */}
           <div className="px-4 py-3 space-y-1.5">
             {slide.bullets.map((b, i) => (
-              <div key={i} className="flex gap-2 text-sm text-gray-300">
-                <span className="text-blue-400 flex-shrink-0">▸</span>
+              <div key={i} className="flex gap-2 text-sm text-[#a7a7a7]">
+                <span className="text-[#76b900] flex-shrink-0">▸</span>
                 <span>{b}</span>
               </div>
             ))}
             {slide.rest.map((line, i) => (
-              <p key={`r${i}`} className="text-sm text-gray-400">{line}</p>
+              <p key={`r${i}`} className="text-sm text-[#757575]">{line}</p>
             ))}
           </div>
         </div>
@@ -224,7 +207,6 @@ export default function ResultViewer({ content, videoId, format }) {
   const renderContent = () => {
     if (format === 'twitter') return <TweetCards content={content} />
     if (format === 'slides')  return <SlideCards content={content} />
-    // mindmap, linkedin, and original 4 formats all use the markdown parser
     return (
       <div className="space-y-0.5">
         {parseMarkdown(content, videoId, format)}
@@ -233,24 +215,24 @@ export default function ResultViewer({ content, videoId, format }) {
   }
 
   return (
-    <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+    <div className="bg-[#1a1a1a] border border-[#5e5e5e] rounded-[2px] overflow-hidden" style={{ boxShadow: 'rgba(0,0,0,0.3) 0px 0px 5px 0px' }}>
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-800/80">
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#5e5e5e]">
+        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#757575]">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
           </svg>
           변환 결과
           {videoId && (
-            <span className="ml-1 text-blue-500/60 text-xs">[MM:SS] 클릭 시 영상 이동</span>
+            <span className="ml-1 text-[#76b900]/70 text-xs normal-case font-normal tracking-normal">[MM:SS] 클릭 시 영상 이동</span>
           )}
         </div>
         <button
           onClick={handleCopy}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[2px] text-xs font-bold transition-all ${
             copied
-              ? 'bg-green-900/60 text-green-400 border border-green-700/60'
-              : 'bg-gray-800 text-gray-400 hover:text-gray-200 hover:bg-gray-700 border border-gray-700/60'
+              ? 'bg-[#3f8500]/20 text-[#76b900] border border-[#76b900]/60'
+              : 'bg-transparent text-[#a7a7a7] hover:text-white border border-[#5e5e5e] hover:border-[#76b900]'
           }`}
         >
           {copied ? (

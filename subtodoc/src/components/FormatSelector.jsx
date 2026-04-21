@@ -30,13 +30,13 @@ export default function FormatSelector({
 }) {
   return (
     <div className="space-y-3">
-      <label className="block text-sm font-medium text-gray-400">문서 형식</label>
+      <label className="block text-xs font-bold uppercase tracking-wider text-[#a7a7a7]">문서 형식</label>
 
       {/* Grouped format sections */}
       <div className="space-y-3">
         {FORMAT_GROUPS.map(group => (
           <div key={group.label} className="space-y-1.5">
-            <p className="text-xs text-gray-600 font-medium uppercase tracking-wider">{group.label}</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#76b900]">{group.label}</p>
             <div className="grid grid-cols-2 gap-2">
               {group.ids.map(id => {
                 const f = FORMATS.find(fmt => fmt.id === id)
@@ -46,18 +46,18 @@ export default function FormatSelector({
                   <button
                     key={id}
                     onClick={() => onChange(id)}
-                    className={`flex items-center gap-3 px-3.5 py-3 rounded-xl text-left transition-all ${
+                    className={`flex items-center gap-3 px-3.5 py-3 rounded-[2px] text-left transition-all ${
                       isSelected
-                        ? 'bg-blue-600/20 border border-blue-500/60 text-blue-300'
-                        : 'bg-gray-800/60 border border-gray-700/60 text-gray-400 hover:border-gray-600 hover:text-gray-300'
+                        ? 'bg-[#76b900]/10 border-2 border-[#76b900] text-white'
+                        : 'bg-[#1a1a1a] border border-[#5e5e5e] text-[#a7a7a7] hover:border-[#76b900]/60 hover:text-white'
                     }`}
                   >
                     <span className="text-lg leading-none flex-shrink-0">{meta.emoji}</span>
                     <span className="flex flex-col gap-0.5 min-w-0">
-                      <span className={`text-sm font-medium leading-none ${isSelected ? 'text-blue-200' : 'text-gray-300'}`}>
+                      <span className={`text-sm font-bold leading-none ${isSelected ? 'text-white' : 'text-white'}`}>
                         {f?.label ?? id}
                       </span>
-                      <span className="text-xs text-gray-500 leading-tight truncate">{meta.desc}</span>
+                      <span className="text-xs text-[#757575] leading-tight truncate">{meta.desc}</span>
                     </span>
                   </button>
                 )
@@ -76,16 +76,16 @@ export default function FormatSelector({
             aria-checked={includeTimestamps}
             onClick={() => onTimestampsChange(!includeTimestamps)}
             className={`relative w-9 h-5 rounded-full transition-colors flex-shrink-0 focus:outline-none ${
-              includeTimestamps ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'
+              includeTimestamps ? 'bg-[#76b900]' : 'bg-[#5e5e5e] hover:bg-[#757575]'
             }`}
           >
             <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${
               includeTimestamps ? 'translate-x-4' : 'translate-x-0'
             }`} />
           </button>
-          <span className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors leading-tight">
+          <span className="text-sm text-[#a7a7a7] group-hover:text-white transition-colors leading-tight">
             타임스탬프 포함
-            <span className="ml-1.5 text-xs text-gray-600">[MM:SS] 클릭 시 해당 구간으로</span>
+            <span className="ml-1.5 text-xs text-[#757575]">[MM:SS] 클릭 시 해당 구간으로</span>
           </span>
         </label>
       )}
@@ -100,7 +100,7 @@ export default function FormatSelector({
               onShowCustomInstructionToggle(next)
               if (!next) onCustomInstructionChange('')
             }}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-300 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-bold text-[#757575] hover:text-[#76b900] transition-colors uppercase tracking-wider text-xs"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
@@ -119,7 +119,7 @@ export default function FormatSelector({
               value={customInstruction}
               onChange={e => onCustomInstructionChange(e.target.value)}
               placeholder="예: 초보자 친화적으로 · 유머러스하게 · 스타트업 투자자용으로"
-              className="w-full px-3 py-2 bg-gray-800/60 border border-gray-700 rounded-xl text-sm text-gray-100 placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors animate-slide-up"
+              className="w-full px-3 py-2 bg-[#000000] border border-[#5e5e5e] rounded-[2px] text-sm text-white placeholder-[#757575] focus:outline-none focus:border-[#76b900] transition-colors animate-slide-up"
               autoFocus
             />
           )}

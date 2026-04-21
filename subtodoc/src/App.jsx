@@ -113,23 +113,24 @@ export default function App() {
       : url.trim().length > 0)
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
-      <div className="fixed inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/40 to-transparent" />
+    <div className="min-h-screen bg-[#000000] text-white" style={{ fontFamily: 'Arial, Helvetica, sans-serif' }}>
+      {/* NVIDIA green top accent line */}
+      <div className="fixed inset-x-0 top-0 h-0.5 bg-[#76b900]" />
 
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-gray-950/80 backdrop-blur-md border-b border-gray-800/60">
+      <header className="sticky top-0 z-40 bg-[#000000] border-b border-[#5e5e5e]">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-sm select-none">
+            <span className="w-7 h-7 rounded-[2px] bg-[#76b900] flex items-center justify-center text-black font-bold text-sm select-none">
               S
             </span>
             <span className="font-bold text-white tracking-tight">SubToDoc</span>
-            <span className="hidden sm:inline text-xs text-gray-500 ml-1">YouTube → 문서</span>
+            <span className="hidden sm:inline text-xs text-[#757575] ml-1 uppercase tracking-wider">YouTube → 문서</span>
           </div>
           <button
             onClick={() => setShowSettings(true)}
             aria-label="설정 열기"
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-100 hover:bg-gray-800 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-[2px] text-[#a7a7a7] hover:text-white hover:bg-[#1a1a1a] border border-transparent hover:border-[#5e5e5e] transition-colors"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
@@ -142,10 +143,10 @@ export default function App() {
       <main className="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-4">
 
         {/* Input Card */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden animate-fade-in">
+        <div className="bg-[#1a1a1a] border border-[#5e5e5e] rounded-[2px] overflow-hidden animate-fade-in" style={{ boxShadow: 'rgba(0,0,0,0.3) 0px 0px 5px 0px' }}>
 
           {/* Tabs */}
-          <div className="flex border-b border-gray-800">
+          <div className="flex border-b border-[#5e5e5e]">
             {[
               {
                 id: 'url',
@@ -171,10 +172,10 @@ export default function App() {
               <button
                 key={tab.id}
                 onClick={() => { setActiveTab(tab.id); setError('') }}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold uppercase tracking-wider transition-colors ${
                   activeTab === tab.id
-                    ? 'text-blue-400 border-b-2 border-blue-500 bg-blue-500/5'
-                    : 'text-gray-500 hover:text-gray-300 border-b-2 border-transparent'
+                    ? 'text-[#76b900] border-b-2 border-[#76b900] bg-[#76b900]/5'
+                    : 'text-[#757575] hover:text-white border-b-2 border-transparent'
                 }`}
               >
                 {tab.icon}
@@ -210,19 +211,19 @@ export default function App() {
 
             {/* Error */}
             {error && (
-              <div className="flex gap-3 p-3.5 bg-red-950/60 border border-red-800/60 rounded-xl animate-slide-up">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-red-400 flex-shrink-0 mt-0.5" strokeLinecap="round" strokeLinejoin="round">
+              <div className="flex gap-3 p-3.5 bg-[#650b0b]/40 border border-[#e52020]/50 rounded-[2px] animate-slide-up">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[#e52020] flex-shrink-0 mt-0.5" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                 </svg>
                 <div className="space-y-1 text-sm">
-                  <p className="text-red-300">{error}</p>
+                  <p className="text-white font-bold">{error}</p>
                   {activeTab === 'url' && (
-                    <p className="text-gray-500">
+                    <p className="text-[#757575]">
                       자막 자동 가져오기 실패 —{' '}
                       <button
                         type="button"
                         onClick={() => { setActiveTab('paste'); setError('') }}
-                        className="text-blue-400 hover:text-blue-300 underline underline-offset-2 transition-colors"
+                        className="text-[#76b900] hover:text-[#bff230] underline underline-offset-2 transition-colors"
                       >
                         직접 붙여넣기
                       </button>
@@ -237,15 +238,15 @@ export default function App() {
             <button
               onClick={handleConvert}
               disabled={!canConvert}
-              className={`w-full h-12 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
+              className={`w-full h-12 rounded-[2px] font-bold text-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wider ${
                 canConvert
-                  ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20 hover:shadow-blue-500/30'
-                  : 'bg-gray-800 text-gray-600 cursor-not-allowed'
+                  ? 'bg-transparent border-2 border-[#76b900] text-white hover:bg-[#1eaedb] hover:border-[#1eaedb]'
+                  : 'bg-transparent border-2 border-[#5e5e5e] text-[#757575] cursor-not-allowed'
               }`}
             >
               {loading ? (
                 <>
-                  <svg className="animate-spin-slow w-4 h-4 text-blue-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin-slow w-4 h-4 text-[#76b900]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                   </svg>
