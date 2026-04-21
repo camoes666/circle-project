@@ -33,7 +33,7 @@ const AI_PROVIDERS = [
   {
     id: 'gemini',
     label: 'Gemini',
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.5-flash-lite',
     badge: '',
     keyField: 'geminiApiKey',
     placeholder: 'AIza...',
