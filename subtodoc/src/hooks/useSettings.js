@@ -3,8 +3,8 @@ import { useState } from 'react'
 const STORAGE_KEY = 'subtodoc_settings'
 
 const DEFAULTS = {
-  provider: 'groq',
-  groqApiKey: '',
+  provider: 'groq',    // 'groq' | 'groq-oss' | 'gemini'
+  groqApiKey: '',      // groq + groq-oss 공유
   geminiApiKey: '',
   language: '한국어',
   transcriptProvider: 'supadata',
