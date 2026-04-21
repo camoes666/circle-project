@@ -21,7 +21,19 @@ export const FORMATS = [
   },
 ]
 
-export function buildPrompt(formatId, language = '한국어') {
+export function buildPrompt(formatId, language = '한국어', options = {}) {
+  const { includeTimestamps = false, customInstruction = '' } = options
   const format = FORMATS.find(f => f.id === formatId)
-  return `다음 YouTube 영상 자막을 ${language}로 변환해줘.\n${format.instruction}\n\n자막:\n`
+
+  let prompt = `다음 YouTube 영상 자막을 ${language}로 변환해줘.\n${format.instruction}\n`
+
+  if (includeTimestamps) {
+    prompt += `중요한 내용마다 가까운 타임스탬프를 [MM:SS] 형식으로 포함해줘. 예: [01:23] 핵심 내용\n`
+  }
+
+  if (customInstruction.trim()) {
+    prompt += `추가 지시사항: ${customInstruction.trim()}\n`
+  }
+
+  return prompt + '\n자막:\n'
 }

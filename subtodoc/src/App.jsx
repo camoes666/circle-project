@@ -1,69 +1,109 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import UrlInput from './components/UrlInput'
 import FormatSelector from './components/FormatSelector'
 import ResultViewer from './components/ResultViewer'
 import ExportButtons from './components/ExportButtons'
 import SettingsModal from './components/SettingsModal'
 import TranscriptPaste from './components/TranscriptPaste'
+import VideoPreview from './components/VideoPreview'
+import HistoryPanel from './components/HistoryPanel'
 import { useSettings } from './hooks/useSettings'
+import { useHistory } from './hooks/useHistory'
 import { extractVideoId, fetchTranscript } from './services/transcript'
 import { buildPrompt } from './services/prompts'
 import { generateDocument } from './services/ai'
 
 export default function App() {
   const { settings, updateSettings } = useSettings()
+  const { history, addEntry, removeEntry, clearHistory } = useHistory()
+
   const [url, setUrl] = useState('')
   const [format, setFormat] = useState('summary')
   const [result, setResult] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showSettings, setShowSettings] = useState(false)
-  const [activeTab, setActiveTab] = useState('url') // 'url' | 'paste'
+  const [activeTab, setActiveTab] = useState('url')
   const [manualTranscript, setManualTranscript] = useState('')
+
+  // v2 state
+  const [includeTimestamps, setIncludeTimestamps] = useState(false)
+  const [customInstruction, setCustomInstruction] = useState('')
+  const [showCustomInstruction, setShowCustomInstruction] = useState(false)
+
+  // Task 1: videoId as derived state
+  const videoId = useMemo(() => extractVideoId(url), [url])
 
   const handleConvert = async () => {
     setError('')
     setResult('')
-
-    if (activeTab === 'paste') {
-      if (!manualTranscript.trim()) return
-      setLoading(true)
-      try {
-        const prompt = buildPrompt(format, settings.language)
-        const doc = await generateDocument(manualTranscript.trim(), prompt, settings)
-        setResult(doc)
-      } catch (e) {
-        setError(e.message)
-      } finally {
-        setLoading(false)
-      }
-      return
-    }
-
-    const videoId = extractVideoId(url)
-    if (!videoId) {
-      setError('유효한 YouTube URL을 입력해주세요.')
-      return
-    }
     setLoading(true)
+
     try {
-      const transcript = await fetchTranscript(videoId, settings)
-      const prompt = buildPrompt(format, settings.language)
+      let transcript
+
+      if (activeTab === 'paste') {
+        if (!manualTranscript.trim()) { setLoading(false); return }
+        transcript = manualTranscript.trim()
+      } else {
+        if (!videoId) {
+          setError('유효한 YouTube URL을 입력해주세요.')
+          setLoading(false)
+          return
+        }
+        try {
+          transcript = await fetchTranscript(videoId, {
+            ...settings,
+            withTimestamps: includeTimestamps,
+          })
+        } catch (e) {
+          setError(e.message)
+          if (
+            e.message.includes('자막') ||
+            e.message.includes('fetch') ||
+            e.message.includes('API') ||
+            e.message.includes('Failed')
+          ) {
+            setActiveTab('paste')
+          }
+          setLoading(false)
+          return
+        }
+      }
+
+      const prompt = buildPrompt(format, settings.language, {
+        includeTimestamps,
+        customInstruction: showCustomInstruction ? customInstruction : '',
+      })
       const doc = await generateDocument(transcript, prompt, settings)
       setResult(doc)
+
+      addEntry({
+        url: activeTab === 'url' ? url : '',
+        videoId: activeTab === 'url' ? (videoId ?? null) : null,
+        format,
+        result: doc,
+        customInstruction: showCustomInstruction ? customInstruction : '',
+        includeTimestamps,
+      })
     } catch (e) {
       setError(e.message)
-      if (
-        e.message.includes('자막') ||
-        e.message.includes('fetch') ||
-        e.message.includes('API') ||
-        e.message.includes('Failed')
-      ) {
-        setActiveTab('paste')
-      }
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleRestore = (entry) => {
+    if (entry.url) {
+      setActiveTab('url')
+      setUrl(entry.url)
+    }
+    setFormat(entry.format)
+    setResult(entry.result)
+    setCustomInstruction(entry.customInstruction || '')
+    setShowCustomInstruction(!!entry.customInstruction)
+    setIncludeTimestamps(entry.includeTimestamps || false)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const canConvert =
@@ -74,7 +114,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
-      {/* subtle top glow */}
       <div className="fixed inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/40 to-transparent" />
 
       {/* Header */}
@@ -108,17 +147,26 @@ export default function App() {
           {/* Tabs */}
           <div className="flex border-b border-gray-800">
             {[
-              { id: 'url', label: 'YouTube URL', icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.38.55A3.02 3.02 0 00.5 6.19C0 8.04 0 12 0 12s0 3.96.5 5.81a3.02 3.02 0 002.12 2.14c1.84.55 9.38.55 9.38.55s7.54 0 9.38-.55a3.02 3.02 0 002.12-2.14C24 15.96 24 12 24 12s0-3.96-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/>
-                </svg>
-              )},
-              { id: 'paste', label: '자막 붙여넣기', icon: (
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="9" y="2" width="6" height="4" rx="1"/><path d="M8 4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2"/>
-                  <path d="M9 12h6M9 16h4"/>
-                </svg>
-              )},
+              {
+                id: 'url',
+                label: 'YouTube URL',
+                icon: (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.38.55A3.02 3.02 0 00.5 6.19C0 8.04 0 12 0 12s0 3.96.5 5.81a3.02 3.02 0 002.12 2.14c1.84.55 9.38.55 9.38.55s7.54 0 9.38-.55a3.02 3.02 0 002.12-2.14C24 15.96 24 12 24 12s0-3.96-.5-5.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/>
+                  </svg>
+                ),
+              },
+              {
+                id: 'paste',
+                label: '자막 붙여넣기',
+                icon: (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="9" y="2" width="6" height="4" rx="1"/>
+                    <path d="M8 4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2"/>
+                    <path d="M9 12h6M9 16h4"/>
+                  </svg>
+                ),
+              },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -138,13 +186,27 @@ export default function App() {
           {/* Tab Content */}
           <div className="p-5 space-y-5">
             {activeTab === 'url' ? (
-              <UrlInput value={url} onChange={setUrl} />
+              <div className="space-y-3">
+                <UrlInput value={url} onChange={setUrl} />
+                <VideoPreview videoId={videoId} />
+              </div>
             ) : (
               <TranscriptPaste value={manualTranscript} onChange={setManualTranscript} />
             )}
 
-            {/* Format Selector */}
-            <FormatSelector selected={format} onChange={setFormat} />
+            <FormatSelector
+              selected={format}
+              onChange={setFormat}
+              includeTimestamps={includeTimestamps}
+              onTimestampsChange={setIncludeTimestamps}
+              showCustomInstruction={showCustomInstruction}
+              onShowCustomInstructionToggle={(show) => {
+                setShowCustomInstruction(show)
+                if (!show) setCustomInstruction('')
+              }}
+              customInstruction={customInstruction}
+              onCustomInstructionChange={setCustomInstruction}
+            />
 
             {/* Error */}
             {error && (
@@ -205,13 +267,23 @@ export default function App() {
         {/* Result */}
         {result && (
           <div className="animate-slide-up space-y-3">
-            <ResultViewer content={result} />
+            <ResultViewer
+              content={result}
+              videoId={activeTab === 'url' ? videoId : null}
+            />
             <ExportButtons content={result} />
           </div>
         )}
+
+        {/* History */}
+        <HistoryPanel
+          history={history}
+          onRestore={handleRestore}
+          onRemove={removeEntry}
+          onClear={clearHistory}
+        />
       </main>
 
-      {/* Settings Modal */}
       {showSettings && (
         <SettingsModal
           settings={settings}
