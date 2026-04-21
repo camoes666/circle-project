@@ -96,7 +96,30 @@
       "Bash(git -C /c/Users/USER/code/circle-project show FETCH_HEAD --stat)",
       "Bash(git -C /c/Users/USER/code/circle-project show FETCH_HEAD:index.html)",
       "Bash(git -C /c/Users/USER/code/circle-project show FETCH_HEAD --name-only)",
-      "Bash(git worktree:*)"
+      "Bash(git worktree:*)",
+      "Bash(gh repo:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(git clone:*)",
+      "Bash(mkdir -p .claude/skills/intent-review .claude/commands .claude/refs docs/design)",
+      "Bash(cp docs/intent-review-universal/SKILL.md .claude/skills/intent-review/SKILL.md)",
+      "Bash(cp docs/architecture-review-universal/COMMAND.md .claude/commands/architecture-review.md)",
+      "Bash(cp docs/service-design-universal/COMMAND.md .claude/commands/service-design.md)",
+      "Bash(cp docs/service-design-universal/KNOWLEDGE-GAPS.md .claude/refs/service-design-knowledge-gaps.md)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty' 2>/dev/null); case \"$f\" in *.test.js|*.spec.js|*.test.jsx|*.spec.jsx) exit 0;; *.js|*.jsx) ;; *) exit 0;; esac; SCRIPT=.claude/skills/intent-review/quick-check.sh; if [ ! -f \"$SCRIPT\" ]; then SENTINEL=/tmp/intent-review-notified-$PPID; if [ ! -f \"$SENTINEL\" ]; then touch \"$SENTINEL\"; echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"[intent-review] quick-check.sh가 아직 생성되지 않았습니다.\"}}'; fi; exit 0; fi; [ -f \"$f\" ] && bash \"$SCRIPT\" \"$f\" 2>/dev/null || true",
+            "timeout": 10,
+            "statusMessage": "intent-review quick-check..."
+          }
+        ]
+      }
     ]
   }
 }
