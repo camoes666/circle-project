@@ -32,16 +32,23 @@ function inlineMarkdown(text, videoId, format) {
 function parseMarkdown(text, videoId, format) {
   const lines = text.split('\n')
   const elements = []
+  // listBuffer items: { text, depth }  (depth 0 = top-level, 1 = sub-bullet)
   let listBuffer = []
 
   const flushList = () => {
     if (listBuffer.length > 0) {
       elements.push(
-        <ul key={`ul-${elements.length}`} className="space-y-1.5 mb-3 pl-0">
+        <ul key={`ul-${elements.length}`} className="space-y-1 mb-3 pl-0">
           {listBuffer.map((item, i) => (
-            <li key={i} className="flex gap-2 text-gray-300 text-sm leading-relaxed">
-              <span className="text-blue-400 font-bold flex-shrink-0 mt-0.5">•</span>
-              <span dangerouslySetInnerHTML={{ __html: inlineMarkdown(item, videoId, format) }} />
+            <li key={i}
+              className={`flex gap-2 text-sm leading-relaxed ${
+                item.depth > 0 ? 'ml-5 text-gray-400' : 'text-gray-300'
+              }`}
+            >
+              <span className={`flex-shrink-0 mt-0.5 ${item.depth > 0 ? 'text-gray-600' : 'text-blue-400 font-bold'}`}>
+                {item.depth > 0 ? '◦' : '•'}
+              </span>
+              <span dangerouslySetInnerHTML={{ __html: inlineMarkdown(item.text, videoId, format) }} />
             </li>
           ))}
         </ul>
@@ -59,8 +66,13 @@ function parseMarkdown(text, videoId, format) {
       )
     } else if (/^## /.test(line)) {
       flushList()
+      // mindmap: ## gets a subtle left-border accent for visual hierarchy
+      const isMindmap = format === 'mindmap'
       elements.push(
-        <h2 key={i} className="text-base font-semibold text-gray-100 mt-5 mb-1.5 leading-snug"
+        <h2 key={i}
+          className={`text-base font-semibold text-gray-100 mt-5 mb-1.5 leading-snug ${
+            isMindmap ? 'pl-3 border-l-2 border-blue-500/50' : ''
+          }`}
           dangerouslySetInnerHTML={{ __html: inlineMarkdown(line.slice(3), videoId, format) }} />
       )
     } else if (/^### /.test(line)) {
@@ -69,10 +81,14 @@ function parseMarkdown(text, videoId, format) {
         <h3 key={i} className="text-sm font-semibold text-gray-200 mt-4 mb-1 leading-snug"
           dangerouslySetInnerHTML={{ __html: inlineMarkdown(line.slice(4), videoId, format) }} />
       )
+    } else if (/^ {2,}[-*] /.test(line)) {
+      // indented sub-bullet (2+ spaces then - or *)
+      const text = line.replace(/^ +[-*] /, '')
+      listBuffer.push({ text, depth: 1 })
     } else if (/^[-*] /.test(line)) {
-      listBuffer.push(line.slice(2))
+      listBuffer.push({ text: line.slice(2), depth: 0 })
     } else if (/^\d+\. /.test(line)) {
-      listBuffer.push(line.replace(/^\d+\. /, ''))
+      listBuffer.push({ text: line.replace(/^\d+\. /, ''), depth: 0 })
     } else if (line.trim() === '---') {
       flushList()
       elements.push(<hr key={i} className="border-gray-700/60 my-4" />)
@@ -93,8 +109,9 @@ function parseMarkdown(text, videoId, format) {
 // ── Twitter thread renderer ─────────────────────────────────────────────────
 
 function parseTweets(content) {
+  // Accept "---" with any amount of surrounding whitespace/newlines
   return content
-    .split(/\n---\n|^---$/m)
+    .split(/\n\s*---\s*\n/)
     .map(t => t.trim())
     .filter(Boolean)
 }
@@ -135,8 +152,9 @@ function TweetCards({ content }) {
 // ── Slide deck renderer ─────────────────────────────────────────────────────
 
 function parseSlides(content) {
+  // Accept "---" with any amount of surrounding whitespace/newlines
   return content
-    .split(/\n---\n|^---$/m)
+    .split(/\n\s*---\s*\n/)
     .map(s => s.trim())
     .filter(Boolean)
     .map((slide, i) => {
