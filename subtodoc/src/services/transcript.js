@@ -113,15 +113,40 @@ export async function fetchFromLocalServer(videoId, serverUrl) {
   throw new Error('로컬 서버 응답 형식 오류')
 }
 
+// ── 자체 자막 서버 (POST /api/transcript)
+export async function fetchFromCustomServer(youtubeUrl, serverUrl = 'http://115.68.193.201') {
+  const base = serverUrl.replace(/\/$/, '')
+  const res = await fetch(`${base}/api/transcript`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url: youtubeUrl }),
+  })
+
+  const json = await res.json().catch(() => ({}))
+
+  if (res.status === 400) throw new Error('유효한 유튜브 주소가 아닙니다.')
+  if (res.status === 404) throw new Error('자막이 비활성화되었거나 찾을 수 없습니다.')
+  if (!res.ok) throw new Error(json.detail || `자막 서버 오류: ${res.status}`)
+  if (json.status !== 'success' || !json.data) throw new Error('자막 서버 응답 형식 오류')
+
+  return json.data.trim()
+}
+
 // ── 통합 진입점
 export async function fetchTranscript(videoId, settings = {}) {
   const {
-    transcriptProvider = 'auto',
+    transcriptProvider = 'custom-server',
     supadadataApiKey = '',
     localServerUrl = 'http://localhost:8000',
+    customServerUrl = 'http://115.68.193.201',
     withTimestamps = false,
+    url = '',
   } = settings
 
+  if (transcriptProvider === 'custom-server') {
+    const youtubeUrl = url || `https://www.youtube.com/watch?v=${videoId}`
+    return fetchFromCustomServer(youtubeUrl, customServerUrl)
+  }
   if (transcriptProvider === 'supadata') {
     if (!supadadataApiKey) throw new Error('Supadata API 키를 설정에서 입력해주세요.')
     return fetchFromSupadata(videoId, supadadataApiKey, withTimestamps)

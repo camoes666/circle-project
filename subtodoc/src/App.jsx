@@ -7,6 +7,7 @@ import SettingsModal from './components/SettingsModal'
 import TranscriptPaste from './components/TranscriptPaste'
 import VideoPreview from './components/VideoPreview'
 import HistoryPanel from './components/HistoryPanel'
+import ProviderBar from './components/ProviderBar'
 import { useSettings } from './hooks/useSettings'
 import { useHistory } from './hooks/useHistory'
 import { extractVideoId, fetchTranscript } from './services/transcript'
@@ -62,6 +63,7 @@ export default function App() {
         try {
           transcript = await fetchTranscript(videoId, {
             ...settings,
+            url,
             withTimestamps: includeTimestamps,
           })
         } catch (e) {
@@ -223,6 +225,14 @@ export default function App() {
             ) : (
               <TranscriptPaste value={manualTranscript} onChange={setManualTranscript} />
             )}
+
+            <ProviderBar
+              settings={settings}
+              onChangeTranscript={(id) => updateSettings({ transcriptProvider: id })}
+              onChangeAI={(id) => updateSettings({ provider: id })}
+            />
+
+            <div className="border-t border-[var(--border)]" />
 
             <FormatSelector
               selected={format}
